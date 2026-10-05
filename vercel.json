@@ -3,27 +3,11 @@
   "services": {
     "frontend": {
       "root": "frontend",
-      "framework": "nextjs",
-      "bindings": [
-        {
-          "type": "service",
-          "service": "studio",
-          "format": "url",
-          "env": "STUDIO_URL"
-        }
-      ]
+      "framework": "nextjs"
     },
     "studio": {
       "root": "studio",
-      "framework": "sanity",
-      "bindings": [
-        {
-          "type": "service",
-          "service": "frontend",
-          "format": "url",
-          "env": "FRONTEND_URL"
-        }
-      ]
+      "framework": "sanity"
     }
   },
   "rewrites": [
