@@ -65,6 +65,13 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
 
           <div className="flex items-center gap-3">
             <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-zinc-950 hover:bg-zinc-900 text-xs font-mono px-3.5 py-2 text-zinc-300 hover:text-white transition-colors"
+            >
+              <span>TOUT LE BLOG</span>
+              <ArrowRight className="h-3 w-3 text-zinc-400" />
+            </Link>
+            <Link
               href={studioUrl}
               className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-zinc-950 hover:bg-zinc-900 text-xs font-mono px-3.5 py-2 text-zinc-300 hover:text-white transition-colors"
             >
@@ -119,7 +126,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
 
                   {/* Title & Excerpt */}
                   <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-zinc-300 transition-colors tracking-tight leading-snug mb-3">
-                    <Link href={`/posts/${article.slug}`}>
+                    <Link href={`/blog/${article.slug}`}>
                       {article.title}
                     </Link>
                   </h3>
@@ -136,7 +143,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
                   </span>
 
                   <Link
-                    href={`/posts/${article.slug}`}
+                    href={`/blog/${article.slug}`}
                     className="inline-flex items-center gap-1.5 text-zinc-300 group-hover:text-white transition-colors text-[11px] font-semibold"
                   >
                     <span>LIRE LE DOSSIER</span>

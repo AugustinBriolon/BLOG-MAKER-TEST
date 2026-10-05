@@ -8,7 +8,6 @@ import {
   Calendar,
   Share2,
   CheckCircle2,
-  FileText,
   User,
   ExternalLink,
 } from 'lucide-react'

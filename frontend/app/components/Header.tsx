@@ -31,8 +31,8 @@ export default function Header() {
             <Link href="/#engine-sound" className="hover:text-white transition-colors">
               SON CP3
             </Link>
-            <Link href="/#articles" className="hover:text-white transition-colors">
-              DOSSIERS
+            <Link href="/blog" className="hover:text-white transition-colors">
+              BLOG
             </Link>
           </nav>
 

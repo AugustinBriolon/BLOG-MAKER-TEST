@@ -7,14 +7,11 @@ import {
   Search,
   Clock,
   ArrowRight,
-  Sparkles,
   ExternalLink,
   BookOpen,
   Filter,
-  Layers,
 } from 'lucide-react'
 import {studioUrl} from '@/sanity/lib/api'
-import type {CuratedArticle} from '@/app/data/curated-articles'
 
 export interface BlogItem {
   _id: string
