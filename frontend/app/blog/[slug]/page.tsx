@@ -58,7 +58,14 @@ export async function generateMetadata(
           : [],
       title: `${post?.title} | Blog Yamaha XSR 900`,
       description: post?.excerpt || undefined,
+      alternates: {
+        canonical: `/blog/${slug}`,
+      },
       openGraph: {
+        title: `${post?.title} | Blog Yamaha XSR 900`,
+        description: post?.excerpt || undefined,
+        type: 'article',
+        publishedTime: post?.date || undefined,
         images: ogImage ? [ogImage, ...previousImages] : previousImages,
       },
     } satisfies Metadata
@@ -70,6 +77,15 @@ export async function generateMetadata(
       authors: [{name: fallback.author.name}],
       title: `${fallback.title} | Blog Yamaha XSR 900`,
       description: fallback.excerpt,
+      alternates: {
+        canonical: `/blog/${slug}`,
+      },
+      openGraph: {
+        title: `${fallback.title} | Blog Yamaha XSR 900`,
+        description: fallback.excerpt,
+        type: 'article',
+        publishedTime: fallback.date,
+      },
     } satisfies Metadata
   }
 

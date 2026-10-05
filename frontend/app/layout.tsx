@@ -36,18 +36,37 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     metadataBase = settings?.ogImage?.metadataBase
       ? new URL(settings.ogImage.metadataBase)
-      : undefined
+      : process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
+        : new URL('http://localhost:3000')
   } catch {
-    // ignore
+    metadataBase = new URL('http://localhost:3000')
   }
+
+  const plainDescription = toPlainText(description)
+
   return {
     metadataBase,
     title: {
       template: `%s | ${title}`,
       default: title,
     },
-    description: toPlainText(description),
+    description: plainDescription,
+    alternates: {
+      canonical: './',
+    },
     openGraph: {
+      title,
+      description: plainDescription,
+      siteName: 'Yamaha XSR 900 Hub',
+      locale: 'fr_FR',
+      type: 'website',
+      images: ogImage ? [ogImage] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: plainDescription,
       images: ogImage ? [ogImage] : [],
     },
     verification: {

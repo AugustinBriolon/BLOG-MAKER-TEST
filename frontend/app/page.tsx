@@ -36,8 +36,35 @@ async function CachedPage({perspective, stega}: DynamicFetchOptions) {
     stega,
   })
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        'name': 'Yamaha XSR 900 Hub',
+        'description': 'Guide technique, essais et archives du roadster Yamaha XSR 900 CP3.',
+        'inLanguage': 'fr-FR',
+      },
+      {
+        '@type': 'Product',
+        'name': 'Yamaha XSR 900',
+        'brand': {
+          '@type': 'Brand',
+          'name': 'Yamaha',
+        },
+        'category': 'Motorcycle',
+        'description':
+          'Roadster néo-rétro propulsé par le 3-cylindres Crossplane CP3 de 890 cm³ et cadre Deltabox.',
+      },
+    ],
+  }
+
   return (
     <div className="relative overflow-hidden bg-black text-zinc-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+      />
       {/* 1. Hero Section */}
       <HeroXsr />
 
