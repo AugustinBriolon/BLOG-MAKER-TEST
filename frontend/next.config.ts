@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   cacheLife: { default: sanity },
   images: {
-    remotePatterns: [new URL('https://cdn.sanity.io/**')],
+    remotePatterns: [
+      new URL('https://cdn.sanity.io/**'),
+      new URL('https://cdn2.yamaha-motor.eu/**'),
+    ],
   },
   // Proxy /studio/* to the Sanity Studio dev server running on port 3334
   async rewrites() {
