@@ -5,13 +5,11 @@ import {
   Rotate3d,
   Move,
   Eye,
-  Layers,
   Compass,
   ZoomIn,
   ZoomOut,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
 } from 'lucide-react'
 import {motion, AnimatePresence} from 'framer-motion'
 
@@ -96,30 +94,10 @@ export default function MotorcycleViewer3D() {
 
   const activeLivery = LIVERIES[selectedLivery]
 
-  // Preload frames into memory for ultra-smooth rendering
+  const currentFrameRef = useRef(currentFrame)
   useEffect(() => {
-    const liveryId = activeLivery.id
-    if (!imagesCacheRef.current[liveryId]) {
-      imagesCacheRef.current[liveryId] = []
-    }
-
-    let loaded = 0
-    setLoadedCount(0)
-
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image()
-      img.src = activeLivery.getUrl(i)
-
-      img.onload = () => {
-        loaded++
-        setLoadedCount(loaded)
-        if (i === currentFrame) {
-          renderFrame(currentFrame)
-        }
-      }
-      imagesCacheRef.current[liveryId][i] = img
-    }
-  }, [selectedLivery])
+    currentFrameRef.current = currentFrame
+  }, [currentFrame])
 
   // Draw current frame onto canvas
   const renderFrame = useCallback(
@@ -145,6 +123,41 @@ export default function MotorcycleViewer3D() {
     },
     [activeLivery],
   )
+
+  const renderFrameRef = useRef(renderFrame)
+  useEffect(() => {
+    renderFrameRef.current = renderFrame
+  }, [renderFrame])
+
+  // Preload frames into memory for ultra-smooth rendering
+  useEffect(() => {
+    const liveryId = activeLivery.id
+    if (!imagesCacheRef.current[liveryId]) {
+      imagesCacheRef.current[liveryId] = []
+    }
+
+    let loaded = 0
+    let isCancelled = false
+
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image()
+      img.src = activeLivery.getUrl(i)
+
+      img.onload = () => {
+        if (isCancelled) return
+        loaded++
+        setLoadedCount(loaded)
+        if (i === currentFrameRef.current) {
+          renderFrameRef.current(currentFrameRef.current)
+        }
+      }
+      imagesCacheRef.current[liveryId][i] = img
+    }
+
+    return () => {
+      isCancelled = true
+    }
+  }, [activeLivery])
 
   useEffect(() => {
     renderFrame(currentFrame)
