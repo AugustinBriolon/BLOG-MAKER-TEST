@@ -77,29 +77,36 @@ export default function HeroXsr() {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a
+              <Link
                 href="#showroom-3d"
-                className="group inline-flex items-center gap-2 rounded-lg bg-amber-400 text-black hover:bg-amber-300 px-6 py-3.5 font-mono text-xs font-bold tracking-wider uppercase transition-all shadow-lg shadow-amber-400/20"
-              >
-                <Rotate3d className="h-3.5 w-3.5" />
-                <span>MODÈLE 3D INTERACTIF</span>
-              </a>
-
-              <a
-                href="#articles"
                 className="group inline-flex items-center gap-2 rounded-lg bg-white text-black hover:bg-zinc-200 px-6 py-3.5 font-mono text-xs font-semibold tracking-wider uppercase transition-all"
               >
-                <span>CONSULTER LES DOSSIERS</span>
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-              </a>
+                <Rotate3d className="h-3.5 w-3.5" />
+                <span>INSPECTION 3D</span>
+              </Link>
 
-              <a
+              <Link
+                href="#specs"
+                className="group inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white px-5 py-3.5 font-mono text-xs tracking-wider uppercase transition-all"
+              >
+                <span>INGÉNIERIE</span>
+              </Link>
+
+              <Link
                 href="#engine-sound"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white px-5 py-3.5 font-mono text-xs tracking-wider uppercase transition-all"
               >
                 <Disc className="h-3.5 w-3.5 text-zinc-400" />
-                <span>BANC ACOUSTIQUE</span>
-              </a>
+                <span>BANC CP3</span>
+              </Link>
+
+              <Link
+                href="#articles"
+                className="group inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white px-5 py-3.5 font-mono text-xs tracking-wider uppercase transition-all"
+              >
+                <span>DOSSIERS</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
 

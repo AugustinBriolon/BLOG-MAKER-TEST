@@ -54,24 +54,29 @@ export default function Footer() {
             <span className="text-zinc-300 font-semibold uppercase tracking-wider block">NAVIGATION</span>
             <ul className="space-y-2.5 text-zinc-500">
               <li>
-                <a href="/#articles" className="hover:text-white transition-colors">
-                  Dossiers & Guides
-                </a>
+                <Link href="/#showroom-3d" className="hover:text-white transition-colors">
+                  Studio 3D Interactif
+                </Link>
               </li>
               <li>
-                <a href="/#specs" className="hover:text-white transition-colors">
+                <Link href="/#specs" className="hover:text-white transition-colors">
                   Fiche technique & Deltabox
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/#engine-sound" className="hover:text-white transition-colors">
+                <Link href="/#engine-sound" className="hover:text-white transition-colors">
                   Banc acoustique CP3
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/sitemap.xml" className="hover:text-white transition-colors">
+                <Link href="/#articles" className="hover:text-white transition-colors">
+                  Dossiers & Guides
+                </Link>
+              </li>
+              <li>
+                <Link href="/sitemap.xml" className="hover:text-white transition-colors">
                   Sitemap XML
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

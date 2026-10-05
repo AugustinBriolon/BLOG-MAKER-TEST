@@ -22,14 +22,17 @@ export default function Header() {
 
           {/* Nav links */}
           <nav className="hidden md:flex items-center gap-8 font-mono text-[11px] tracking-widest text-zinc-400">
-            <Link href="/#articles" className="hover:text-white transition-colors">
-              DOSSIERS
+            <Link href="/#showroom-3d" className="hover:text-white transition-colors">
+              STUDIO 3D
             </Link>
             <Link href="/#specs" className="hover:text-white transition-colors">
               INGÉNIERIE
             </Link>
             <Link href="/#engine-sound" className="hover:text-white transition-colors">
               SON CP3
+            </Link>
+            <Link href="/#articles" className="hover:text-white transition-colors">
+              DOSSIERS
             </Link>
           </nav>
 
