@@ -10,12 +10,16 @@ const nextConfig: NextConfig = {
       new URL('https://cdn2.yamaha-motor.eu/**'),
     ],
   },
-  // Proxy /studio/* to the Sanity Studio dev server running on port 3334
+  // Proxy /studio to the Sanity Studio dev server running on port 3333
   async rewrites() {
     return [
       {
+        source: '/studio',
+        destination: 'http://localhost:3333/studio',
+      },
+      {
         source: '/studio/:path*',
-        destination: 'http://localhost:3334/:path*',
+        destination: 'http://localhost:3333/studio/:path*',
       },
     ];
   },
