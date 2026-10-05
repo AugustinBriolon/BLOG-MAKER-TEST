@@ -65,54 +65,87 @@ export default async function PostPage(props: PageProps<'/posts/[slug]'>) {
   }
 
   return (
-    <>
-      <div className="">
-        <div className="container my-12 lg:my-24 grid gap-12">
-          <div>
-            <div className="pb-6 grid gap-6 mb-6 border-b border-gray-100">
-              <div className="max-w-3xl flex flex-col gap-6">
-                <h1 className="text-4xl text-gray-900 sm:text-5xl lg:text-7xl">{post.title}</h1>
-              </div>
-              <div className="max-w-3xl flex gap-4 items-center">
-                {post.author && post.author.firstName && post.author.lastName && (
-                  <Avatar person={post.author} date={post.date} />
-                )}
-              </div>
-            </div>
-            <article className="gap-6 grid max-w-4xl">
-              <div className="">
-                {post?.coverImage && (
-                  <Image
-                    id={post.coverImage.asset?._ref || ''}
-                    alt={post.coverImage.alt || ''}
-                    className="rounded-sm w-full"
-                    width={1024}
-                    height={538}
-                    mode="cover"
-                    hotspot={post.coverImage.hotspot}
-                    crop={post.coverImage.crop}
-                  />
-                )}
-              </div>
-              {post.content?.length && (
-                <PortableText
-                  className="max-w-2xl prose-headings:font-medium prose-headings:tracking-tight"
-                  value={post.content as PortableTextBlock[]}
-                />
-              )}
-            </article>
+    <article className="min-h-screen py-12 lg:py-20 text-zinc-200">
+      <div className="container mx-auto px-4 max-w-4xl">
+        {/* Back navigation */}
+        <div className="mb-10">
+          <a
+            href="/#articles"
+            className="inline-flex items-center gap-2 font-mono text-xs text-amber-400 hover:text-white transition-colors uppercase tracking-wider"
+          >
+            <span>← RETOUR AUX DOSSIERS</span>
+          </a>
+        </div>
+
+        {/* Header HUD */}
+        <header className="space-y-6 pb-10 border-b border-white/10 mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 font-mono text-xs text-amber-400">
+            DOSSIER SPÉCIAL // YAMAHA XSR 900
           </div>
+
+          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+            {post.title}
+          </h1>
+
+          {post.excerpt && (
+            <p className="text-lg sm:text-xl text-zinc-400 font-light leading-relaxed">
+              {post.excerpt}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 text-xs font-mono text-zinc-400">
+            {post.author && post.author.firstName && post.author.lastName && (
+              <div className="flex items-center gap-3">
+                <Avatar person={post.author} date={post.date} />
+              </div>
+            )}
+            {post.date && (
+              <time className="text-zinc-500">
+                PUBLIÉ LE {new Date(post.date).toLocaleDateString('fr-FR')}
+              </time>
+            )}
+          </div>
+        </header>
+
+        {/* Cover image */}
+        {post?.coverImage && (
+          <div className="mb-12 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+            <Image
+              id={post.coverImage.asset?._ref || ''}
+              alt={post.coverImage.alt || ''}
+              className="w-full object-cover max-h-[550px]"
+              width={1200}
+              height={630}
+              mode="cover"
+              hotspot={post.coverImage.hotspot}
+              crop={post.coverImage.crop}
+            />
+          </div>
+        )}
+
+        {/* Body content */}
+        <div className="prose prose-invert prose-amber prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-amber-400 hover:prose-a:underline">
+          {post.content?.length ? (
+            <PortableText
+              className="space-y-6"
+              value={post.content as PortableTextBlock[]}
+            />
+          ) : null}
+        </div>
+
+        {/* Bottom CTA / Studio prompt */}
+        <div className="mt-20 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <a
+            href="/#articles"
+            className="font-mono text-xs text-amber-400 hover:text-white transition-colors"
+          >
+            ← LIRE D&apos;AUTRES GUIDES
+          </a>
+          <span className="font-mono text-xs text-zinc-500">
+            FASTER SONS // CHRONIQUE YAMAHA XSR 900
+          </span>
         </div>
       </div>
-      <div className="border-t border-gray-100 bg-gray-50">
-        <div className="container py-12 lg:py-24 grid gap-12">
-          <aside>
-            <Suspense>
-              <MorePosts skip={post._id} limit={2} />
-            </Suspense>
-          </aside>
-        </div>
-      </div>
-    </>
+    </article>
   )
 }
