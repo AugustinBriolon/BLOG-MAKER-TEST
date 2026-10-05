@@ -89,7 +89,7 @@ export default function MotorcycleViewer3D() {
 
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const imagesCacheRef = useRef<Record<string, HTMLImageElement[]>>({})
+  const processedCacheRef = useRef<Record<string, HTMLCanvasElement[]>>({})
   const dragStartXRef = useRef(0)
   const dragStartFrameRef = useRef(0)
   const velocityRef = useRef(0)
@@ -97,11 +97,11 @@ export default function MotorcycleViewer3D() {
 
   const activeLivery = LIVERIES[selectedLivery]
 
-  // Preload all 36 frames for current livery
+  // Preload and remove white background for all 36 frames of the selected livery
   useEffect(() => {
     const liveryId = activeLivery.id
-    if (!imagesCacheRef.current[liveryId]) {
-      imagesCacheRef.current[liveryId] = []
+    if (!processedCacheRef.current[liveryId]) {
+      processedCacheRef.current[liveryId] = []
     }
 
     let loaded = 0
@@ -109,20 +109,62 @@ export default function MotorcycleViewer3D() {
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image()
+      img.crossOrigin = 'anonymous'
       img.src = activeLivery.getUrl(i)
+
       img.onload = () => {
+        // Process image to eliminate studio white background
+        const offscreen = document.createElement('canvas')
+        offscreen.width = img.naturalWidth
+        offscreen.height = img.naturalHeight
+        const ctx = offscreen.getContext('2d', {willReadFrequently: true})
+
+        if (ctx) {
+          ctx.drawImage(img, 0, 0)
+          try {
+            const imgData = ctx.getImageData(0, 0, offscreen.width, offscreen.height)
+            const data = imgData.data
+
+            for (let p = 0; p < data.length; p += 4) {
+              const r = data[p]
+              const g = data[p + 1]
+              const b = data[p + 2]
+
+              const min = Math.min(r, g, b)
+              const max = Math.max(r, g, b)
+              const diff = max - min
+
+              // Studio white background detection: high brightness & low saturation
+              if (min > 220 && diff < 20) {
+                if (min >= 245) {
+                  // Pure white studio backdrop -> 100% transparent
+                  data[p + 3] = 0
+                } else {
+                  // Soft feathering edge for clean anti-aliased silhouette
+                  const factor = (245 - min) / 25
+                  data[p + 3] = Math.round(factor * 255)
+                }
+              }
+            }
+
+            ctx.putImageData(imgData, 0, 0)
+          } catch {
+            // Fallback if CORS prevents pixel reading
+          }
+        }
+
+        processedCacheRef.current[liveryId][i] = offscreen
         loaded++
         setLoadedCount(loaded)
-        // Redraw when current frame is ready
+
         if (i === currentFrame) {
           renderFrame(currentFrame)
         }
       }
-      imagesCacheRef.current[liveryId][i] = img
     }
   }, [selectedLivery])
 
-  // Draw current frame onto canvas
+  // Draw current transparent frame onto canvas
   const renderFrame = useCallback(
     (frameIndex: number) => {
       const canvas = canvasRef.current
@@ -131,18 +173,16 @@ export default function MotorcycleViewer3D() {
       if (!ctx) return
 
       const liveryId = activeLivery.id
-      const cache = imagesCacheRef.current[liveryId]
-      const img = cache ? cache[frameIndex] : null
+      const processed = processedCacheRef.current[liveryId]?.[frameIndex]
 
-      if (img && img.complete && img.naturalWidth > 0) {
-        // Set canvas resolution to image natural size or container
-        if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
+      if (processed && processed.width > 0) {
+        if (canvas.width !== processed.width || canvas.height !== processed.height) {
+          canvas.width = processed.width
+          canvas.height = processed.height
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        ctx.drawImage(processed, 0, 0, canvas.width, canvas.height)
       }
     },
     [activeLivery, selectedLivery],
@@ -200,27 +240,6 @@ export default function MotorcycleViewer3D() {
     }, 70)
     return () => clearInterval(interval)
   }, [isAutoSpin])
-
-  // Scroll kinematics
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isDragging) return
-      const container = containerRef.current
-      if (!container) return
-      const rect = container.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-
-      // If container is within viewport
-      if (rect.top < windowHeight && rect.bottom > 0) {
-        const progress = Math.max(0, Math.min(1, (windowHeight - rect.top) / (windowHeight + rect.height)))
-        const scrollFrame = Math.floor(progress * TOTAL_FRAMES * 1.5) % TOTAL_FRAMES
-        setCurrentFrame(scrollFrame)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, {passive: true})
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [isDragging])
 
   // Hotspot Navigation (smoothly spin to the designated frame)
   const goToHotspot = (spot: (typeof HOTSPOTS)[number]) => {
@@ -284,7 +303,7 @@ export default function MotorcycleViewer3D() {
 
           <div className="hidden sm:flex items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 font-mono text-[11px] text-zinc-400 backdrop-blur">
             <Move className="h-3 w-3 text-zinc-500" />
-            <span>GLISSER 360° • SCROLL CINÉMATIQUE • ZOOM 4K</span>
+            <span>GLISSER 360° • LOUPE ZOOM 4K • FOND DÉTOURÉ</span>
           </div>
         </div>
 
@@ -322,9 +341,12 @@ export default function MotorcycleViewer3D() {
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
       >
+        {/* Realistic Floor Contact Shadow */}
+        <div className="absolute bottom-[18%] left-1/2 -translate-x-1/2 w-[72%] h-14 bg-black/90 blur-2xl rounded-[100%] pointer-events-none" />
+
         <canvas
           ref={canvasRef}
-          className="max-w-[92%] max-h-[82%] object-contain drop-shadow-[0_35px_50px_rgba(0,0,0,0.9)] transition-opacity duration-300"
+          className="relative z-10 max-w-[92%] max-h-[82%] object-contain drop-shadow-[0_30px_45px_rgba(0,0,0,0.95)] transition-opacity duration-300"
           style={{opacity: loadedCount > 0 ? 1 : 0}}
         />
 
