@@ -56,7 +56,7 @@ export async function generateMetadata(
         post?.author?.firstName && post?.author?.lastName
           ? [{name: `${post.author.firstName} ${post.author.lastName}`}]
           : [],
-      title: `${post?.title} | Blog Yamaha XSR 900`,
+      title: post?.title,
       description: post?.excerpt || undefined,
       alternates: {
         canonical: `/blog/${slug}`,
@@ -75,7 +75,7 @@ export async function generateMetadata(
   if (fallback) {
     return {
       authors: [{name: fallback.author.name}],
-      title: `${fallback.title} | Blog Yamaha XSR 900`,
+      title: fallback.title,
       description: fallback.excerpt,
       alternates: {
         canonical: `/blog/${slug}`,
