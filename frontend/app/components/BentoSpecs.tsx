@@ -1,47 +1,57 @@
 'use client'
 
-import {Activity, Cpu, Compass, Wrench} from 'lucide-react'
+import {Activity, Cpu, Compass, Wrench, Smartphone} from 'lucide-react'
 
 const SPECS = [
   {
     index: '01',
-    tag: 'MOTORISATION',
+    tag: 'MOTORISATION EU5+',
     title: 'Moteur CP3 890 cm³ : 120° Crossplane',
     description:
-      'Trois cylindres en ligne calés à 120°. Grâce à son ordre d’allumage asynchrone, le CP3 élimine le couple d’inertie parasite. Le résultat : une connexion directe et viscérale entre la commande de gaz et la roue arrière.',
+      'Trois cylindres en ligne calés à 120°. Grâce à son ordre d’allumage asynchrone et sa boîte à air acoustique, le CP3 élimine l’inertie parasite et délivre un couple ravageur de 93 Nm dès 7 000 tr/min.',
     icon: Activity,
     highlight: '119 CH // 93 NM',
     cols: 'md:col-span-8',
   },
   {
     index: '02',
-    tag: 'CHÂSSIS',
-    title: 'Deltabox Aluminium CF',
+    tag: 'CHÂSSIS GP HERITAGE',
+    title: 'Deltabox Aluminium CF Die-Cast',
     description:
-      'Structure coulée sous pression à parois fines de 1,7 mm. Bras oscillant allongé de 55 mm assurant une stabilité chirurgicale en forte accélération.',
+      'Structure coulée sous pression à parois fines de 1,7 mm. Bras oscillant allongé de 55 mm assurant une stabilité chirurgicale et une motricité absolue en forte relance.',
     icon: Compass,
-    highlight: '193 KG PLEIN FAIT',
+    highlight: '193 KG TOUS PLEINS FAITS',
     cols: 'md:col-span-4',
   },
   {
     index: '03',
-    tag: 'ÉLECTRONIQUE',
-    title: 'Centrale Inertielle IMU 6 Axes',
+    tag: 'ÉLECTRONIQUE R1 RACE',
+    title: 'Centrale Inertielle IMU 6 Axes & Cruise Control',
     description:
-      'Dérivée directement de la superbike R1. Capteurs mesurant roulis, tangage et lacet 125 fois/sec pour réguler le contrôle de traction (TCS) et de glisse (SCS).',
+      'Dérivée directement de la superbike R1. Capteurs mesurant roulis, tangage et lacet 125 fois/sec pour réguler TCS, SCS, LIF (anti-wheeling) et régulateur de vitesse de série.',
     icon: Cpu,
-    highlight: '4 MODES D-MODE',
-    cols: 'md:col-span-5',
+    highlight: '4 MODES D-MODE + IMU',
+    cols: 'md:col-span-4',
   },
   {
     index: '04',
-    tag: 'COMPOSANTS',
-    title: 'Freinage Radial Brembo & Shifter QSS',
+    tag: 'COCKPIT CONNECTÉ 2025',
+    title: 'Écran Couleur TFT 5" & Connectivité MyRide',
     description:
-      'Maître-cylindre radial Brembo à piston de 16 mm et passage de rapports sans débrayer montée/descente pour une efficacité maximale.',
+      'Nouvelle interface TFT couleur 5 pouces avec thèmes d’affichage rétro, connectivité smartphone MyRide et navigation virage par virage Garmin StreetCross intégrée.',
+    icon: Smartphone,
+    highlight: 'TFT 5" + GARMIN NAV',
+    cols: 'md:col-span-4',
+  },
+  {
+    index: '05',
+    tag: 'COMPOSANTS HAUTE PRÉCISION',
+    title: 'Freinage Radial Brembo & Shifter QSS 3e Génération',
+    description:
+      'Maître-cylindre radial Brembo à piston de 16 mm, double disque 298 mm, et Quickshifter bidirectionnel permettant des passages de vitesse ultra-rapides sans toucher à l’embrayage.',
     icon: Wrench,
-    highlight: 'BREMBO RADIAL',
-    cols: 'md:col-span-7',
+    highlight: 'BREMBO RADIAL + QSS',
+    cols: 'md:col-span-4',
   },
 ]
 

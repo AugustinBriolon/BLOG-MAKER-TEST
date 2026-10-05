@@ -47,11 +47,17 @@ const HOTSPOTS = [
   },
 ]
 
-// Livery options that adjust materials
+// Livery options that adjust materials matching official Yamaha colorways
 const LIVERIES = [
   {
-    name: 'Legend Blue (Sonauto 80s)',
-    tag: 'GP HERITAGE',
+    name: 'Legend Red (Officiel 2025)',
+    tag: 'MILLÉSIME 2025',
+    tankColor: 0xd91d24, // authentic racing scarlet red
+    accentColor: 0xf8fafc, // crisp white speedblocks & gold calipers
+  },
+  {
+    name: 'Legend Blue (Sonauto GP 80s)',
+    tag: 'SARRON HERITAGE',
     tankColor: 0x1e3a8a, // deep racing blue
     accentColor: 0xf59e0b, // gold wheels/accents
   },
@@ -62,8 +68,8 @@ const LIVERIES = [
     accentColor: 0xd97706, // metallic gold
   },
   {
-    name: 'Historic White (Speedblock)',
-    tag: 'RACING 1980',
+    name: 'Historic White Speedblock',
+    tag: 'RACING CLASSIC',
     tankColor: 0xf8fafc, // racing pearl white
     accentColor: 0xdc2626, // red speedblock
   },
@@ -75,7 +81,7 @@ export default function MotorcycleViewer3D() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null)
   const [selectedLivery, setSelectedLivery] = useState(0)
-  const [isInteracting, setIsInteracting] = useState(false)
+  const isInteractingRef = useRef(false)
 
   const controlsRef = useRef<OrbitControls | null>(null)
   const modelGroupRef = useRef<THREE.Group | null>(null)
@@ -126,8 +132,12 @@ export default function MotorcycleViewer3D() {
     controls.target.set(0, 0.45, 0)
     controlsRef.current = controls
 
-    controls.addEventListener('start', () => setIsInteracting(true))
-    controls.addEventListener('end', () => setIsInteracting(false))
+    controls.addEventListener('start', () => {
+      isInteractingRef.current = true
+    })
+    controls.addEventListener('end', () => {
+      isInteractingRef.current = false
+    })
 
     // Studio Lighting setup
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9)
@@ -297,7 +307,7 @@ export default function MotorcycleViewer3D() {
 
       // If user is not dragging with mouse, apply subtle mouse parallax + scroll rotation
       if (modelGroupRef.current) {
-        if (!isInteracting) {
+        if (!isInteractingRef.current) {
           const targetRot = baseRotation + scrollRotationOffset + mouseX * 0.25
           currentRotation = THREE.MathUtils.lerp(currentRotation, targetRot, 0.05)
           modelGroupRef.current.rotation.y = currentRotation
@@ -455,14 +465,23 @@ export default function MotorcycleViewer3D() {
           </div>
         </div>
 
-        {/* Reset Camera button */}
-        <button
-          onClick={resetCamera}
-          className="pointer-events-auto cursor-pointer rounded-full border border-white/10 bg-black/70 hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-white px-3.5 py-1.5 transition-colors backdrop-blur flex items-center gap-1.5"
-        >
-          <Compass className="h-3 w-3" />
-          <span>RÉINITIALISER LA VUE</span>
-        </button>
+        <div className="flex items-center gap-2 pointer-events-auto">
+          <a
+            href="https://www.yamaha-motor.eu/fr/fr/motorcycles/sport-heritage/pdp/xsr900/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer rounded-full border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-xs font-mono text-red-300 hover:text-white px-3 py-1.5 transition-colors backdrop-blur flex items-center gap-1.5"
+          >
+            <span>YAMAHA EU OFFICIEL ↗</span>
+          </a>
+          <button
+            onClick={resetCamera}
+            className="cursor-pointer rounded-full border border-white/10 bg-black/70 hover:bg-zinc-800 text-xs font-mono text-zinc-300 hover:text-white px-3.5 py-1.5 transition-colors backdrop-blur flex items-center gap-1.5"
+          >
+            <Compass className="h-3 w-3" />
+            <span>RÉINITIALISER</span>
+          </button>
+        </div>
       </div>
 
       {/* Floating Hotspot Buttons (Left Panel) */}
