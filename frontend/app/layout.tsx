@@ -8,6 +8,7 @@ import {toPlainText} from 'next-sanity'
 import {VisualEditing} from 'next-sanity/visual-editing'
 import {Toaster} from 'sonner'
 
+import CustomCursor from '@/app/components/CustomCursor'
 import DraftModeToast from '@/app/components/DraftModeToast'
 import Footer from '@/app/components/Footer'
 import Header from '@/app/components/Header'
@@ -64,8 +65,6 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
 })
-
-import CustomCursor from '@/app/components/CustomCursor'
 
 export default async function RootLayout({children}: {children: React.ReactNode}) {
   const {isEnabled: isDraftMode} = await draftMode()

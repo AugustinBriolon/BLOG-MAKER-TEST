@@ -7,43 +7,43 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {Rotate3d, Move, Eye, Layers, Compass, ZoomIn} from 'lucide-react'
 import {motion, AnimatePresence} from 'framer-motion'
 
-// Hotspots on the Yamaha platform
+// Hotspots on the authentic Yamaha XSR Sport Heritage platform
 const HOTSPOTS = [
   {
+    id: 'headlight',
+    title: 'Phare Rond Full LED & Cockpit',
+    badge: 'SIGNATURE FASTER SONS',
+    desc: 'Optique circulaire emblématique de la lignée Sport Heritage, alliant design 80s vintage et technologie Full LED.',
+    pos: new THREE.Vector3(0, 0.85, 0.85),
+    camTarget: new THREE.Vector3(0, 0.8, 0.8),
+    camPos: new THREE.Vector3(0.5, 0.95, 1.5),
+  },
+  {
+    id: 'tank',
+    title: 'Réservoir Rétro Échancré',
+    badge: 'ALUMINIUM BROSSÉ',
+    desc: 'Réservoir sculpté avec découpes de genoux caractéristiques inspiré des machines de Grand Prix Yamaha des années 1980.',
+    pos: new THREE.Vector3(0, 0.8, 0.1),
+    camTarget: new THREE.Vector3(0, 0.75, 0.1),
+    camPos: new THREE.Vector3(1.1, 1.1, 0.6),
+  },
+  {
     id: 'engine',
-    title: 'Moteur CP3 890 cm³',
-    badge: 'CROSSPLANE 120°',
-    desc: '3-cylindres explosif développant 119 ch et 93 Nm de couple dès les bas régimes.',
-    pos: new THREE.Vector3(0, 0.45, 0.1),
-    camTarget: new THREE.Vector3(0, 0.45, 0.1),
-    camPos: new THREE.Vector3(1.4, 0.6, 1.2),
-  },
-  {
-    id: 'frame',
-    title: 'Cadre Deltabox CF',
-    badge: 'ALU COULÉ SOUS PRESSION',
-    desc: 'Structure ultra-rigide à parois de 1,7 mm pour une précision chirurgicale en courbe.',
-    pos: new THREE.Vector3(0, 0.75, 0.3),
-    camTarget: new THREE.Vector3(0, 0.75, 0.3),
-    camPos: new THREE.Vector3(0.2, 1.1, 2.0),
-  },
-  {
-    id: 'brakes',
-    title: 'Freinage Radial Brembo',
-    badge: 'DOUBLE DISQUE 298 MM',
-    desc: 'Maître-cylindre avant radial Brembo pour un mordant immédiat et dosable au millimètre.',
-    pos: new THREE.Vector3(0.95, 0.4, 0.1),
-    camTarget: new THREE.Vector3(0.95, 0.4, 0.1),
-    camPos: new THREE.Vector3(1.7, 0.6, 0.7),
+    title: 'Moteur Crossplane Apparent',
+    badge: 'ARCHITECTURE NAKED',
+    desc: 'Bloc moteur totalement mis en valeur sans carénage plastique, délivrant une vivacité et une sonorité caractéristiques.',
+    pos: new THREE.Vector3(0, 0.45, 0.0),
+    camTarget: new THREE.Vector3(0, 0.45, 0.0),
+    camPos: new THREE.Vector3(1.3, 0.55, 0.8),
   },
   {
     id: 'exhaust',
-    title: 'Ligne Échappement Basse',
-    badge: 'CENTRALISATION DES MASSES',
-    desc: 'Collecteur 3-en-1 avec silencieux compact sous le moteur pour abaisser le centre de gravité.',
-    pos: new THREE.Vector3(-0.3, 0.15, -0.2),
-    camTarget: new THREE.Vector3(-0.3, 0.15, -0.2),
-    camPos: new THREE.Vector3(-1.4, 0.35, 1.3),
+    title: 'Échappement & Arrière Épuré',
+    badge: 'LIGNE SOUS LE MOTEUR',
+    desc: 'Centralisation optimale des masses et boucle arrière minimaliste typique de l’esprit Café Racer contemporain.',
+    pos: new THREE.Vector3(-0.2, 0.25, -0.3),
+    camTarget: new THREE.Vector3(-0.2, 0.3, -0.2),
+    camPos: new THREE.Vector3(-1.3, 0.45, 1.0),
   },
 ]
 

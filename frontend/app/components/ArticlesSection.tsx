@@ -3,64 +3,22 @@
 import {useState} from 'react'
 import Link from 'next/link'
 import {motion, AnimatePresence} from 'framer-motion'
-import {BookOpen, Clock, Tag, ExternalLink, Sparkles, ArrowRight} from 'lucide-react'
-import type {AllPostsQueryResult} from '@/sanity.types'
+import {Clock, ExternalLink, ArrowRight} from 'lucide-react'
 import {studioUrl} from '@/sanity/lib/api'
 
-// Curated reference articles used for testing & immediate niche content
-const FALLBACK_ARTICLES = [
-  {
-    _id: 'draft-1',
-    title: 'Essai Longue Durée : 5 000 km au guidon de la Yamaha XSR 900',
-    slug: 'essai-longue-duree-yamaha-xsr-900',
-    category: 'ESSAIS & TESTS',
-    readTime: '8 min de lecture',
-    date: '2026-10-05',
-    excerpt:
-      'Que vaut le roadster néo-rétro japonais sur le réseau secondaire et les trajets quotidiens ? Retour d’expérience sans concession sur la rigidité du châssis Deltabox, la position de conduite et la consommation réelle du 3-cylindres CP3.',
-    tag: 'ESSAI ROUTIER',
-    highlight: '119 CH SUR LE BANC',
-  },
-  {
-    _id: 'draft-2',
-    title: 'Top 5 des Lignes d’Échappement pour magnifier le Moteur CP3',
-    slug: 'meilleurs-echappements-yamaha-xsr-900',
-    category: 'ACCESSOIRES & SON',
-    readTime: '6 min de lecture',
-    date: '2026-10-04',
-    excerpt:
-      'Comparatif des systèmes d’échappement complets pour la XSR 900 : Akrapovič Titane homologué Euro 5+, SC-Project S1, Spark 3-en-1 et Arrow. Mesures au sonomètre, courbes de couple et gains de poids.',
-    tag: 'ÉCHAPPEMENT CP3',
-    highlight: 'SONORITÉ RACING',
-  },
-  {
-    _id: 'draft-3',
-    title: 'Prépa Café Racer : Transformer sa XSR 900 en bête de Grand Prix 80s',
-    slug: 'prepa-cafe-racer-yamaha-xsr-900',
-    category: 'CUSTOM & ATELIER',
-    readTime: '7 min de lecture',
-    date: '2026-10-03',
-    excerpt:
-      'Guide pas à pas pour radicaliser votre roadster : installation du kit carénage Faster Sons, demi-guidons bracelets, commandes reculées Gilles Tooling et support de plaque court taillé dans la masse.',
-    tag: 'PERSONNALISATION',
-    highlight: 'STYLE TZ GRAND PRIX',
-  },
-  {
-    _id: 'draft-4',
-    title: 'Guide d’Entretien CP3 : Vidange, Tendeur de Distribution et Révisions',
-    slug: 'guide-entretien-moteur-cp3-yamaha',
-    category: 'MOTEUR & TECHNIQUE',
-    readTime: '10 min de lecture',
-    date: '2026-10-02',
-    excerpt:
-      'Tout ce qu’il faut savoir pour préserver la santé mécanique de votre bloc 890 cm³. Choix de l’huile moteur Yamalube 10W40, contrôle du jeu aux soupapes à 40 000 km et surveillance du tendeur de chaîne hydraulique.',
-    tag: 'MÉCANIQUE',
-    highlight: 'INTERVALLES CONSTRUCTEUR',
-  },
-]
+import {CURATED_ARTICLES} from '@/app/data/curated-articles'
+
+type ArticleItem = {
+  _id: string
+  title?: string | null
+  slug?: string | null
+  date?: string | null
+  excerpt?: string | null
+  [key: string]: unknown
+}
 
 type ArticlesSectionProps = {
-  sanityPosts?: any[]
+  sanityPosts?: ArticleItem[]
 }
 
 export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps) {
@@ -84,7 +42,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
         highlight: 'DIRECT CMS',
         isSanity: true,
       }))
-    : FALLBACK_ARTICLES.map((a) => ({...a, isSanity: false}))
+    : CURATED_ARTICLES.map((a) => ({...a, isSanity: false}))
 
   const filteredItems =
     activeFilter === 'TOUS'

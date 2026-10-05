@@ -3,7 +3,7 @@
  * Importing other npm packages here could lead to needlessly increasing the client bundle size, or end up in a server-only function that don't need it.
  */
 
-function assertValue<T>(v: T | undefined, errorMessage: string): T {
+export function assertValue<T>(v: T | undefined, errorMessage: string): T {
   if (v === undefined) {
     throw new Error(errorMessage)
   }

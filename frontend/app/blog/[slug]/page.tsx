@@ -37,7 +37,7 @@ export async function generateStaticParams() {
  * Generate metadata for the page.
  */
 export async function generateMetadata(
-  props: PageProps<'/posts/[slug]'>,
+  props: PageProps<'/blog/[slug]'>,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const [{slug}, {perspective}] = await Promise.all([props.params, getDynamicFetchOptions()])
@@ -56,7 +56,7 @@ export async function generateMetadata(
         post?.author?.firstName && post?.author?.lastName
           ? [{name: `${post.author.firstName} ${post.author.lastName}`}]
           : [],
-      title: `${post?.title} | Dossier Yamaha XSR 900`,
+      title: `${post?.title} | Blog Yamaha XSR 900`,
       description: post?.excerpt || undefined,
       openGraph: {
         images: ogImage ? [ogImage, ...previousImages] : previousImages,
@@ -68,7 +68,7 @@ export async function generateMetadata(
   if (fallback) {
     return {
       authors: [{name: fallback.author.name}],
-      title: `${fallback.title} | Dossier Yamaha XSR 900`,
+      title: `${fallback.title} | Blog Yamaha XSR 900`,
       description: fallback.excerpt,
     } satisfies Metadata
   }
@@ -79,27 +79,27 @@ export async function generateMetadata(
 }
 
 // Layer 1: Page component (draftMode branch)
-export default async function PostPage({params}: PageProps<'/posts/[slug]'>) {
+export default async function BlogSlugPage({params}: PageProps<'/blog/[slug]'>) {
   const {isEnabled: isDraftMode} = await draftMode()
   if (isDraftMode) {
     return (
-      <Suspense fallback={<PostFallback />}>
-        <DynamicPostPage params={params} />
+      <Suspense fallback={<BlogSlugFallback />}>
+        <DynamicBlogSlugPage params={params} />
       </Suspense>
     )
   }
   const {slug} = await params
-  return <CachedPostPage slug={slug} perspective="published" stega={false} />
+  return <CachedBlogSlugPage slug={slug} perspective="published" stega={false} />
 }
 
 // Layer 2: Dynamic component
-async function DynamicPostPage({params}: Pick<PageProps<'/posts/[slug]'>, 'params'>) {
+async function DynamicBlogSlugPage({params}: Pick<PageProps<'/blog/[slug]'>, 'params'>) {
   const [{slug}, {perspective, stega}] = await Promise.all([params, getDynamicFetchOptions()])
-  return <CachedPostPage slug={slug} perspective={perspective} stega={stega} />
+  return <CachedBlogSlugPage slug={slug} perspective={perspective} stega={stega} />
 }
 
 // Layer 3: Cached component
-async function CachedPostPage({
+async function CachedBlogSlugPage({
   slug,
   perspective,
   stega,
@@ -166,10 +166,10 @@ async function CachedPostPage({
   )
 }
 
-function PostFallback() {
+function BlogSlugFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center font-mono text-xs text-zinc-500 bg-black">
-      CHARGEMENT DU DOSSIER...
+      CHARGEMENT DU DOSSIER BLOG...
     </div>
   )
 }
