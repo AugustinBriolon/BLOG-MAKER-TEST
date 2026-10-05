@@ -13,13 +13,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     query: sitemapData,
   })
   const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const proto = headersList.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https')
+  const baseUrl = `${proto}://${host}`
+
   const sitemap: MetadataRoute.Sitemap = []
-  const domain: string = headersList.get('host') as string
   sitemap.push({
-    url: domain as string,
+    url: baseUrl,
     lastModified: new Date(),
     priority: 1,
-    changeFrequency: 'monthly',
+    changeFrequency: 'weekly',
   })
 
   if (allPostsAndPages != null && allPostsAndPages.data.length != 0) {
@@ -40,16 +43,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         case 'page':
           priority = 0.8
           changeFrequency = 'monthly'
-          url = `${domain}/${p.slug}`
+          url = `${baseUrl}/${p.slug}`
           break
         case 'post':
-          priority = 0.5
-          changeFrequency = 'never'
-          url = `${domain}/posts/${p.slug}`
+          priority = 0.7
+          changeFrequency = 'weekly'
+          url = `${baseUrl}/posts/${p.slug}`
           break
       }
       sitemap.push({
-        lastModified: p._updatedAt || new Date(),
+        lastModified: p._updatedAt ? new Date(p._updatedAt) : new Date(),
         priority,
         changeFrequency,
         url,

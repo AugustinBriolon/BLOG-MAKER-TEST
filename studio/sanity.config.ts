@@ -21,8 +21,11 @@ import {assist} from '@sanity/assist'
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID'
 const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
 
-// URL for preview functionality, defaults to localhost:3000 if not set
-const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
+// URL for preview functionality, defaults to bound FRONTEND_URL or window origin or localhost:3000
+const SANITY_STUDIO_PREVIEW_URL =
+  process.env.SANITY_STUDIO_PREVIEW_URL ||
+  process.env.FRONTEND_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
 
 // Define the home location for the presentation tool
 const homeLocation = {
@@ -47,7 +50,8 @@ function resolveHref(documentType?: string, slug?: string): string | undefined {
 // Main Sanity configuration
 export default defineConfig({
   name: 'default',
-  title: 'Sanity + Next.js Starter Template',
+  title: 'Yamaha XSR 900 Blog Studio',
+  basePath: '/studio',
 
   projectId,
   dataset,
