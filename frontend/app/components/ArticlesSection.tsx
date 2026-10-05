@@ -60,7 +60,7 @@ const FALLBACK_ARTICLES = [
 ]
 
 type ArticlesSectionProps = {
-  sanityPosts?: AllPostsQueryResult
+  sanityPosts?: any[]
 }
 
 export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps) {
@@ -93,14 +93,13 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
 
   return (
     <section id="articles" className="py-24 relative">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Header & Filter Row */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 border-b border-white/10 pb-8">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 font-mono text-xs text-amber-400 mb-3">
-              <BookOpen className="h-3.5 w-3.5" />
-              CHRONIQUES & ESSAIS SPÉCIALISÉS
-            </div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 border-b border-white/[0.08] pb-8">
+          <div className="space-y-3">
+            <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase block">
+              [ 04 // DOSSIERS & PUBLICATIONS ]
+            </span>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight uppercase">
               LE MAGAZINE XSR 900
             </h2>
@@ -109,25 +108,25 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
           <div className="flex items-center gap-3">
             <Link
               href={studioUrl}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-zinc-900/80 hover:bg-zinc-800 text-xs font-mono px-3.5 py-2 text-zinc-300 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-zinc-950 hover:bg-zinc-900 text-xs font-mono px-3.5 py-2 text-zinc-300 hover:text-white transition-colors"
             >
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>OUVRIR SANITY STUDIO</span>
-              <ExternalLink className="h-3 w-3" />
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span>CMS STUDIO</span>
+              <ExternalLink className="h-3 w-3 text-zinc-500" />
             </Link>
           </div>
         </div>
 
-        {/* Filter Pills */}
+        {/* Filter Tabs */}
         <div className="flex flex-wrap gap-2 mb-10">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
-              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold tracking-wider uppercase transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg font-mono text-[11px] font-medium tracking-wider uppercase transition-all cursor-pointer ${
                 activeFilter === cat
-                  ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/20'
-                  : 'bg-zinc-900/60 border border-white/10 text-zinc-400 hover:text-white hover:border-white/20'
+                  ? 'border border-white bg-white text-black'
+                  : 'border border-white/[0.08] bg-black text-zinc-400 hover:text-white hover:border-white/20'
               }`}
             >
               {cat}
@@ -136,37 +135,35 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
         </div>
 
         {/* Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <AnimatePresence mode="popLayout">
             {filteredItems.map((article, idx) => (
               <motion.article
                 layout
                 key={article._id}
-                initial={{opacity: 0, y: 20}}
+                initial={{opacity: 0, y: 15}}
                 animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, scale: 0.95}}
-                transition={{duration: 0.4, delay: idx * 0.05}}
-                className="group relative rounded-3xl border border-white/10 bg-gradient-to-b from-zinc-900/80 to-zinc-950 p-8 flex flex-col justify-between hover:border-amber-400/40 transition-all duration-300 shadow-xl overflow-hidden"
+                exit={{opacity: 0, scale: 0.98}}
+                transition={{duration: 0.35, delay: idx * 0.04}}
+                className="group relative rounded-2xl border border-white/[0.08] bg-zinc-950 p-8 flex flex-col justify-between hover:border-white/25 transition-all duration-300"
               >
-                {/* Background Hover Glow */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-all duration-500 pointer-events-none" />
-
                 <div>
                   {/* Meta tags top */}
-                  <div className="flex items-center justify-between text-xs font-mono text-zinc-400 mb-6">
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 border border-white/10 text-amber-300 font-semibold">
-                      <Tag className="h-3 w-3" />
+                  <div className="flex items-center justify-between text-xs font-mono text-zinc-500 mb-5">
+                    <span className="border border-white/[0.08] bg-black px-2 py-0.5 rounded text-[11px] text-zinc-300">
                       {article.tag}
                     </span>
-                    <span className="flex items-center gap-1.5 text-zinc-500">
+                    <span className="flex items-center gap-1.5 text-zinc-500 text-[11px]">
                       <Clock className="h-3 w-3" />
                       {article.readTime}
                     </span>
                   </div>
 
                   {/* Title & Excerpt */}
-                  <h3 className="text-2xl font-bold text-white group-hover:text-amber-400 transition-colors tracking-tight leading-snug mb-4">
-                    {article.title}
+                  <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-zinc-300 transition-colors tracking-tight leading-snug mb-3">
+                    <Link href={`/posts/${article.slug}`}>
+                      {article.title}
+                    </Link>
                   </h3>
 
                   <p className="text-zinc-400 text-sm leading-relaxed font-light line-clamp-3 mb-6">
@@ -175,17 +172,17 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
                 </div>
 
                 {/* Footer of Card */}
-                <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-                  <span className="font-mono text-xs text-zinc-500">
+                <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between font-mono text-xs">
+                  <span className="text-zinc-500 text-[11px]">
                     {article.date}
                   </span>
 
                   <Link
                     href={`/posts/${article.slug}`}
-                    className="inline-flex items-center gap-2 font-mono text-xs font-bold text-amber-400 group-hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 text-zinc-300 group-hover:text-white transition-colors text-[11px] font-semibold"
                   >
                     <span>LIRE LE DOSSIER</span>
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
               </motion.article>
@@ -194,26 +191,26 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
         </div>
 
         {/* Dynamic CMS Status / Injection Box */}
-        <div className="mt-16 rounded-3xl border border-dashed border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-950 to-zinc-900 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-16 rounded-2xl border border-dashed border-white/[0.15] bg-zinc-950 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 font-mono text-xs text-amber-400 font-bold uppercase tracking-wider">
-              <Sparkles className="h-4 w-4" />
-              SYNCHRONISATION CMS ACTIVE
+            <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400 uppercase tracking-widest">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              SYNCHRONISATION CMS SANITY ACTIVE
             </div>
-            <h4 className="text-xl md:text-2xl font-bold text-white">
-              Générez et publiez vos prochains articles en 1 clic
+            <h4 className="text-xl font-bold text-white">
+              Publication en direct depuis le CMS Sanity
             </h4>
             <p className="text-zinc-400 text-sm font-light leading-relaxed">
-              Votre outil <strong className="text-white">Blog Maker</strong> est relié à ce projet Sanity. Dès que vous publiez un article depuis l&apos;Étape 5 de l&apos;interface, il s&apos;affiche instantanément ici avec son formatage complet.
+              Vos articles rédigés dans le Studio Sanity s&apos;affichent immédiatement ici grâce au composant <code className="text-white bg-black px-1.5 py-0.5 rounded border border-white/[0.08] font-mono text-xs">&lt;SanityLive&gt;</code> et au cache intelligent.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
             <Link
               href={studioUrl}
-              className="cursor-pointer w-full sm:w-auto rounded-xl bg-white text-black hover:bg-amber-400 font-mono text-xs font-bold px-6 py-3.5 tracking-wider uppercase transition-colors text-center shadow"
+              className="cursor-pointer w-full sm:w-auto rounded-lg bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold px-5 py-3 tracking-wider uppercase transition-colors text-center"
             >
-              ACCÉDER AU STUDIO
+              OUVRIR LE STUDIO
             </Link>
           </div>
         </div>

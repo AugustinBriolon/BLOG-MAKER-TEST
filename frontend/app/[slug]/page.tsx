@@ -1,37 +1,41 @@
 import type {Metadata} from 'next'
-import Head from 'next/head'
+import {draftMode} from 'next/headers'
+import {Suspense} from 'react'
 
 import PageBuilderPage from '@/app/components/PageBuilder'
-import {sanityFetch} from '@/sanity/lib/live'
+import {
+  getDynamicFetchOptions,
+  sanityFetch,
+  sanityFetchMetadata,
+  sanityFetchStaticParams,
+  type DynamicFetchOptions,
+} from '@/sanity/lib/live'
 import {getPageQuery, pagesSlugs} from '@/sanity/lib/queries'
 import {GetPageQueryResult} from '@/sanity.types'
 import {PageOnboarding} from '@/app/components/Onboarding'
 
 /**
  * Generate the static params for the page.
- * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-static-params
  */
 export async function generateStaticParams() {
-  const {data} = await sanityFetch({
+  const {data} = await sanityFetchStaticParams({
     query: pagesSlugs,
-    // // Use the published perspective in generateStaticParams
-    perspective: 'published',
-    stega: false,
   })
+  if (!data || data.length === 0) {
+    return [{slug: '_initialization'}]
+  }
   return data
 }
 
 /**
  * Generate metadata for the page.
- * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
 export async function generateMetadata(props: PageProps<'/[slug]'>): Promise<Metadata> {
-  const params = await props.params
-  const {data: page} = await sanityFetch({
+  const [{slug}, {perspective}] = await Promise.all([props.params, getDynamicFetchOptions()])
+  const {data: page} = await sanityFetchMetadata({
     query: getPageQuery,
-    params,
-    // Metadata should never contain stega
-    stega: false,
+    params: {slug},
+    perspective,
   })
 
   return {
@@ -40,36 +44,76 @@ export async function generateMetadata(props: PageProps<'/[slug]'>): Promise<Met
   } satisfies Metadata
 }
 
-export default async function Page(props: PageProps<'/[slug]'>) {
-  const params = await props.params
-  const [{data: page}] = await Promise.all([sanityFetch({query: getPageQuery, params})])
+// Layer 1: Page component (draftMode branch)
+export default async function Page({params}: PageProps<'/[slug]'>) {
+  const {isEnabled: isDraftMode} = await draftMode()
+  if (isDraftMode) {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <DynamicPage params={params} />
+      </Suspense>
+    )
+  }
+  const {slug} = await params
+  return <CachedPage slug={slug} perspective="published" stega={false} />
+}
+
+// Layer 2: Dynamic component
+async function DynamicPage({params}: Pick<PageProps<'/[slug]'>, 'params'>) {
+  const [{slug}, {perspective, stega}] = await Promise.all([params, getDynamicFetchOptions()])
+  return <CachedPage slug={slug} perspective={perspective} stega={stega} />
+}
+
+// Layer 3: Cached component
+async function CachedPage({
+  slug,
+  perspective,
+  stega,
+}: {slug: string} & DynamicFetchOptions) {
+  'use cache'
+  const {data: page} = await sanityFetch({
+    query: getPageQuery,
+    params: {slug},
+    perspective,
+    stega,
+  })
 
   if (!page?._id) {
     return (
-      <div className="py-40">
+      <div className="py-40 bg-black">
         <PageOnboarding />
       </div>
     )
   }
 
   return (
-    <div className="my-12 lg:my-24">
-      <Head>
-        <title>{page.heading}</title>
-      </Head>
-      <div className="">
-        <div className="container">
-          <div className="pb-6 border-b border-gray-100">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl text-gray-900 sm:text-5xl lg:text-7xl">{page.heading}</h1>
-              <p className="mt-4 text-base lg:text-lg leading-relaxed text-gray-600 uppercase font-light">
+    <div className="my-12 lg:my-24 bg-black text-zinc-100">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="pb-8 border-b border-white/[0.08] mb-12">
+          <div className="max-w-3xl space-y-4">
+            <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase block">
+              [ PAGE // {page.name || 'ARCHIVE'} ]
+            </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white tracking-tight">
+              {page.heading}
+            </h1>
+            {page.subheading && (
+              <p className="mt-4 text-base lg:text-lg leading-relaxed text-zinc-400 font-light">
                 {page.subheading}
               </p>
-            </div>
+            )}
           </div>
         </div>
       </div>
       <PageBuilderPage page={page as GetPageQueryResult} />
+    </div>
+  )
+}
+
+function PageFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center font-mono text-xs text-zinc-500 bg-black">
+      CHARGEMENT DE LA PAGE...
     </div>
   )
 }

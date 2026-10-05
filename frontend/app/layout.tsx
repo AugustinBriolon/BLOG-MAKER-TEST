@@ -12,7 +12,7 @@ import DraftModeToast from '@/app/components/DraftModeToast'
 import Footer from '@/app/components/Footer'
 import Header from '@/app/components/Header'
 import * as demo from '@/sanity/lib/demo'
-import {sanityFetch, SanityLive} from '@/sanity/lib/live'
+import {getDynamicFetchOptions, sanityFetchMetadata, SanityLive} from '@/sanity/lib/live'
 import {settingsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import {handleError} from '@/app/client-utils'
@@ -22,10 +22,10 @@ import {handleError} from '@/app/client-utils'
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const {data: settings} = await sanityFetch({
+  const {perspective} = await getDynamicFetchOptions()
+  const {data: settings} = await sanityFetchMetadata({
     query: settingsQuery,
-    // Metadata should never contain stega
-    stega: false,
+    perspective,
   })
   const title = settings?.title || demo.title
   const description = settings?.description || demo.description
@@ -60,7 +60,7 @@ const inter = Inter({
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
-  weight: ['400'],
+  weight: ['400', '500'],
   subsets: ['latin'],
   display: 'swap',
 })
@@ -71,8 +71,11 @@ export default async function RootLayout({children}: {children: React.ReactNode}
   const {isEnabled: isDraftMode} = await draftMode()
 
   return (
-    <html lang="fr" className={`${inter.variable} ${ibmPlexMono.variable} bg-[#08080b] text-zinc-100 antialiased selection:bg-amber-400 selection:text-black`}>
-      <body className="bg-[#08080b] text-zinc-100 min-h-screen overflow-x-hidden">
+    <html
+      lang="fr"
+      className={`${inter.variable} ${ibmPlexMono.variable} bg-black text-zinc-100 antialiased selection:bg-white selection:text-black`}
+    >
+      <body className="bg-black text-zinc-100 min-h-screen overflow-x-hidden">
         <CustomCursor />
         <Toaster theme="dark" />
         {isDraftMode && (
@@ -81,7 +84,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
             <VisualEditing />
           </>
         )}
-        <SanityLive onError={handleError} />
+        <SanityLive includeDrafts={isDraftMode} onError={handleError} />
         <Header />
         <main className="pt-20">{children}</main>
         <Footer />

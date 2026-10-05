@@ -1,44 +1,48 @@
 import type {Metadata, ResolvingMetadata} from 'next'
+import {draftMode} from 'next/headers'
+import Link from 'next/link'
 import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
 
 import Avatar from '@/app/components/Avatar'
-import {MorePosts} from '@/app/components/Posts'
 import PortableText from '@/app/components/PortableText'
 import Image from '@/app/components/SanityImage'
-import {sanityFetch} from '@/sanity/lib/live'
+import {
+  getDynamicFetchOptions,
+  sanityFetch,
+  sanityFetchMetadata,
+  sanityFetchStaticParams,
+  type DynamicFetchOptions,
+} from '@/sanity/lib/live'
 import {postPagesSlugs, postQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 
 /**
  * Generate the static params for the page.
- * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-static-params
  */
 export async function generateStaticParams() {
-  const {data} = await sanityFetch({
+  const {data} = await sanityFetchStaticParams({
     query: postPagesSlugs,
-    // Use the published perspective in generateStaticParams
-    perspective: 'published',
-    stega: false,
   })
+  if (!data || data.length === 0) {
+    return [{slug: '_initialization'}]
+  }
   return data
 }
 
 /**
  * Generate metadata for the page.
- * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
 export async function generateMetadata(
   props: PageProps<'/posts/[slug]'>,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const params = await props.params
-  const {data: post} = await sanityFetch({
+  const [{slug}, {perspective}] = await Promise.all([props.params, getDynamicFetchOptions()])
+  const {data: post} = await sanityFetchMetadata({
     query: postQuery,
-    params,
-    // Metadata should never contain stega
-    stega: false,
+    params: {slug},
+    perspective,
   })
   const previousImages = (await parent).openGraph?.images || []
   const ogImage = resolveOpenGraphImage(post?.coverImage)
@@ -56,44 +60,74 @@ export async function generateMetadata(
   } satisfies Metadata
 }
 
-export default async function PostPage(props: PageProps<'/posts/[slug]'>) {
-  const params = await props.params
-  const [{data: post}] = await Promise.all([sanityFetch({query: postQuery, params})])
+// Layer 1: Page component (draftMode branch)
+export default async function PostPage({params}: PageProps<'/posts/[slug]'>) {
+  const {isEnabled: isDraftMode} = await draftMode()
+  if (isDraftMode) {
+    return (
+      <Suspense fallback={<PostFallback />}>
+        <DynamicPostPage params={params} />
+      </Suspense>
+    )
+  }
+  const {slug} = await params
+  return <CachedPostPage slug={slug} perspective="published" stega={false} />
+}
+
+// Layer 2: Dynamic component
+async function DynamicPostPage({params}: Pick<PageProps<'/posts/[slug]'>, 'params'>) {
+  const [{slug}, {perspective, stega}] = await Promise.all([params, getDynamicFetchOptions()])
+  return <CachedPostPage slug={slug} perspective={perspective} stega={stega} />
+}
+
+// Layer 3: Cached component
+async function CachedPostPage({
+  slug,
+  perspective,
+  stega,
+}: {slug: string} & DynamicFetchOptions) {
+  'use cache'
+  const {data: post} = await sanityFetch({
+    query: postQuery,
+    params: {slug},
+    perspective,
+    stega,
+  })
 
   if (!post?._id) {
     return notFound()
   }
 
   return (
-    <article className="min-h-screen py-12 lg:py-20 text-zinc-200">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <article className="min-h-screen py-12 lg:py-20 text-zinc-200 bg-black">
+      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         {/* Back navigation */}
         <div className="mb-10">
-          <a
+          <Link
             href="/#articles"
-            className="inline-flex items-center gap-2 font-mono text-xs text-amber-400 hover:text-white transition-colors uppercase tracking-wider"
+            className="inline-flex items-center gap-2 font-mono text-xs text-zinc-500 hover:text-white transition-colors uppercase tracking-wider"
           >
             <span>← RETOUR AUX DOSSIERS</span>
-          </a>
+          </Link>
         </div>
 
         {/* Header HUD */}
-        <header className="space-y-6 pb-10 border-b border-white/10 mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 font-mono text-xs text-amber-400">
-            DOSSIER SPÉCIAL // YAMAHA XSR 900
-          </div>
+        <header className="space-y-6 pb-10 border-b border-white/[0.08] mb-10">
+          <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block">
+            [ DOSSIER // YAMAHA XSR 900 ]
+          </span>
 
-          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
             {post.title}
           </h1>
 
           {post.excerpt && (
-            <p className="text-lg sm:text-xl text-zinc-400 font-light leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-400 font-light leading-relaxed">
               {post.excerpt}
             </p>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 text-xs font-mono text-zinc-400">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 text-xs font-mono text-zinc-500">
             {post.author && post.author.firstName && post.author.lastName && (
               <div className="flex items-center gap-3">
                 <Avatar person={post.author} date={post.date} />
@@ -109,7 +143,7 @@ export default async function PostPage(props: PageProps<'/posts/[slug]'>) {
 
         {/* Cover image */}
         {post?.coverImage && (
-          <div className="mb-12 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="mb-12 rounded-2xl overflow-hidden border border-white/[0.08] bg-zinc-950">
             <Image
               id={post.coverImage.asset?._ref || ''}
               alt={post.coverImage.alt || ''}
@@ -124,7 +158,7 @@ export default async function PostPage(props: PageProps<'/posts/[slug]'>) {
         )}
 
         {/* Body content */}
-        <div className="prose prose-invert prose-amber prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-amber-400 hover:prose-a:underline">
+        <div className="prose prose-invert prose-zinc prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white prose-a:text-white hover:prose-a:underline prose-p:text-zinc-300 prose-p:font-light prose-p:leading-relaxed">
           {post.content?.length ? (
             <PortableText
               className="space-y-6"
@@ -134,18 +168,26 @@ export default async function PostPage(props: PageProps<'/posts/[slug]'>) {
         </div>
 
         {/* Bottom CTA / Studio prompt */}
-        <div className="mt-20 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <a
+        <div className="mt-20 pt-10 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-6">
+          <Link
             href="/#articles"
-            className="font-mono text-xs text-amber-400 hover:text-white transition-colors"
+            className="font-mono text-xs text-zinc-400 hover:text-white transition-colors"
           >
             ← LIRE D&apos;AUTRES GUIDES
-          </a>
-          <span className="font-mono text-xs text-zinc-500">
+          </Link>
+          <span className="font-mono text-xs text-zinc-600">
             FASTER SONS // CHRONIQUE YAMAHA XSR 900
           </span>
         </div>
       </div>
     </article>
+  )
+}
+
+function PostFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center font-mono text-xs text-zinc-500">
+      CHARGEMENT DU DOSSIER...
+    </div>
   )
 }

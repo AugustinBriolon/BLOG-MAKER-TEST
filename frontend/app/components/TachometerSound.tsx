@@ -141,43 +141,39 @@ export default function TachometerSound() {
   const isRedline = rpm >= 10200
 
   return (
-    <div className="relative rounded-2xl border border-white/10 bg-zinc-950/80 p-6 md:p-8 backdrop-blur-xl shadow-2xl overflow-hidden">
-      {/* Background aesthetic grid & glow */}
-      <div className="absolute -right-24 -top-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -left-24 -bottom-24 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="relative rounded-2xl border border-white/[0.08] bg-zinc-950 p-6 md:p-8 overflow-hidden">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            <Gauge className="h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-black text-white">
+            <Gauge className="h-4 w-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-mono text-sm uppercase tracking-wider text-white font-bold">
-                CP3 TACHOMETER & ACOUSTIC LAB
+              <h3 className="font-mono text-xs uppercase tracking-wider text-white font-bold">
+                CP3 TACHOMÈTRE & LABO ACOUSTIQUE
               </h3>
-              <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-mono text-amber-300 font-semibold">
+              <span className="rounded border border-white/[0.08] bg-black px-1.5 py-0.5 text-[10px] font-mono text-zinc-400">
                 890 CM³
               </span>
             </div>
-            <p className="text-xs text-zinc-400 font-mono">
-              Banc d&apos;essai acoustique du 3-cylindres Crossplane
+            <p className="text-[11px] text-zinc-500 font-mono">
+              Synthèse acoustique en temps réel du vilebrequin calé à 120°
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Mode Selector */}
-          <div className="flex items-center rounded-lg bg-zinc-900 border border-white/10 p-1 font-mono text-xs">
+          <div className="flex items-center rounded-lg bg-black border border-white/[0.08] p-1 font-mono text-[11px]">
             {(['A', 'STD', 'B'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setEngineMode(m)}
-                className={`px-2.5 py-1 rounded transition-all font-semibold ${
+                className={`px-2.5 py-1 rounded transition-all font-semibold cursor-pointer ${
                   engineMode === m
-                    ? 'bg-amber-500 text-black shadow'
-                    : 'text-zinc-400 hover:text-white'
+                    ? 'bg-white text-black'
+                    : 'text-zinc-500 hover:text-white'
                 }`}
               >
                 MODE {m}
@@ -188,13 +184,13 @@ export default function TachometerSound() {
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}
-            className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 font-mono text-xs font-semibold transition-all ${
+            className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 font-mono text-[11px] font-medium transition-all cursor-pointer ${
               audioEnabled
-                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                : 'bg-zinc-900 border-white/10 text-zinc-400 hover:text-white'
+                ? 'bg-white text-black border-white'
+                : 'bg-black border-white/[0.08] text-zinc-400 hover:text-white'
             }`}
           >
-            {audioEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            {audioEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
             <span>{audioEnabled ? 'SON ACTIF' : 'ACTIVER SON'}</span>
           </button>
         </div>
@@ -204,48 +200,47 @@ export default function TachometerSound() {
       <div className="my-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         {/* Digital Readout */}
         <div className="md:col-span-5 flex flex-col justify-center space-y-2">
-          <div className="font-mono text-xs uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
-            <span className={`h-2 w-2 rounded-full ${isRedline ? 'bg-red-500 animate-ping' : 'bg-amber-400'}`} />
+          <div className="font-mono text-[11px] uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+            <span className={`h-1.5 w-1.5 rounded-full ${isRedline ? 'bg-red-500 animate-ping' : 'bg-white'}`} />
             RÉGIME MOTEUR EN DIRECT
           </div>
           <div className="font-mono text-6xl md:text-7xl font-black tracking-tight text-white flex items-baseline gap-2">
             <span>{Math.round(rpm).toLocaleString()}</span>
-            <span className="text-sm md:text-base font-normal text-amber-400">TR/MIN</span>
+            <span className="text-xs font-normal text-zinc-500">TR/MIN</span>
           </div>
 
-          <div className="pt-2 flex items-center gap-4 text-xs font-mono text-zinc-400">
+          <div className="pt-2 flex items-center gap-4 text-xs font-mono text-zinc-500">
             <div>
-              <span className="text-zinc-500">CALAGE : </span>
-              <span className="text-zinc-200">120° CROSSPLANE</span>
+              <span>CALAGE : </span>
+              <span className="text-zinc-300">120° CP3</span>
             </div>
             <div>
-              <span className="text-zinc-500">MAX : </span>
-              <span className="text-red-400">11 500 RPM</span>
+              <span>RUPTEUR : </span>
+              <span className="text-zinc-300">11 500 RPM</span>
             </div>
           </div>
         </div>
 
         {/* Shift Lights and Gauge Bar */}
         <div className="md:col-span-7 space-y-4">
-          {/* Shift Light Array (F1/MotoGP Style) */}
-          <div className="flex gap-1.5 justify-between">
+          {/* Shift Light Array */}
+          <div className="flex gap-1 justify-between">
             {Array.from({length: 16}).map((_, i) => {
               const active = i / 16 <= rpmRatio
               const isZoneRed = i >= 13
               const isZoneYellow = i >= 9 && i < 13
-              const isZoneGreen = i < 9
 
               return (
                 <div
                   key={i}
-                  className={`h-4 flex-1 rounded-sm transition-all duration-75 ${
+                  className={`h-3 flex-1 rounded-[1px] transition-all duration-75 ${
                     active
                       ? isZoneRed
-                        ? 'bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.9)] animate-pulse'
+                        ? 'bg-red-500'
                         : isZoneYellow
-                          ? 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.8)]'
-                          : 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]'
-                      : 'bg-zinc-800/80 border border-white/5'
+                          ? 'bg-white'
+                          : 'bg-zinc-300'
+                      : 'bg-zinc-900 border border-white/[0.04]'
                   }`}
                 />
               )
@@ -253,12 +248,12 @@ export default function TachometerSound() {
           </div>
 
           {/* RPM Bar Progress */}
-          <div className="relative h-3 w-full bg-zinc-900 rounded-full overflow-hidden border border-white/10">
+          <div className="relative h-1.5 w-full bg-black rounded-full overflow-hidden border border-white/[0.08]">
             <motion.div
               className={`h-full ${
                 isRedline
-                  ? 'bg-gradient-to-r from-emerald-500 via-amber-400 to-red-500'
-                  : 'bg-gradient-to-r from-emerald-500 to-amber-400'
+                  ? 'bg-red-500'
+                  : 'bg-white'
               }`}
               style={{width: `${Math.min(100, rpmRatio * 100)}%`}}
               transition={{duration: 0.05}}
@@ -271,16 +266,16 @@ export default function TachometerSound() {
             <span>4K</span>
             <span>6K</span>
             <span>8K</span>
-            <span className="text-amber-400">10K</span>
-            <span className="text-red-500 font-bold">11.5K (RUPTEUR)</span>
+            <span>10K</span>
+            <span className="text-red-400">11.5K RUPTEUR</span>
           </div>
         </div>
       </div>
 
       {/* Throttle Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/[0.08]">
         <p className="text-xs text-zinc-400 font-mono">
-          Maintiens le bouton ou clique pour faire rugir la ligne d&apos;échappement.
+          Maintenez le bouton ou cliquez pour simuler la montée en régime de l&apos;échappement.
         </p>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -296,14 +291,14 @@ export default function TachometerSound() {
               setIsRevving(true)
             }}
             onTouchEnd={() => setIsRevving(false)}
-            className={`cursor-pointer w-full sm:w-auto select-none rounded-xl px-8 py-3.5 font-mono text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all transform active:scale-95 ${
+            className={`cursor-pointer w-full sm:w-auto select-none rounded-lg px-8 py-3 font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all transform active:scale-95 ${
               isRevving
-                ? 'bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.6)] scale-102'
-                : 'bg-amber-400 text-black hover:bg-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.3)]'
+                ? 'bg-red-500 text-white'
+                : 'bg-white text-black hover:bg-zinc-200'
             }`}
           >
-            <Zap className={`h-4 w-4 ${isRevving ? 'animate-bounce' : ''}`} />
-            <span>{isRevving ? 'POIGNÉE DANS LE COIN !' : 'MAINTENIR POUR ACCÉLÉRER'}</span>
+            <Zap className="h-3.5 w-3.5" />
+            <span>{isRevving ? 'POIGNÉE EN COIN !' : 'MAINTENIR POUR ACCÉLÉRER'}</span>
           </button>
         </div>
       </div>

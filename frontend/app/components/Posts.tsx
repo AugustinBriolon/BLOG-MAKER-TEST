@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link'
 
 import {sanityFetch} from '@/sanity/lib/live'
@@ -56,9 +57,11 @@ const Posts = ({
 )
 
 export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) => {
-  const {data} = await sanityFetch({
+  const {data} = await (sanityFetch as any)({
     query: morePostsQuery,
     params: {skip, limit},
+    perspective: 'published',
+    stega: false,
   })
 
   if (!data || data.length === 0) {
@@ -67,7 +70,7 @@ export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) =>
 
   return (
     <Posts heading={`Recent Posts (${data?.length})`}>
-      {data?.map((post: AllPostsQueryResult[number]) => (
+      {data?.map((post: any) => (
         <Post key={post._id} post={post} />
       ))}
     </Posts>
@@ -75,7 +78,11 @@ export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) =>
 }
 
 export const AllPosts = async () => {
-  const {data} = await sanityFetch({query: allPostsQuery})
+  const {data} = await (sanityFetch as any)({
+    query: allPostsQuery,
+    perspective: 'published',
+    stega: false,
+  })
 
   if (!data || data.length === 0) {
     return <OnBoarding />
@@ -86,7 +93,7 @@ export const AllPosts = async () => {
       heading="Recent Posts"
       subHeading={`${data.length === 1 ? 'This blog post is' : `These ${data.length} blog posts are`} populated from your Sanity Studio.`}
     >
-      {data.map((post: AllPostsQueryResult[number]) => (
+      {data.map((post: any) => (
         <Post key={post._id} post={post} />
       ))}
     </Posts>

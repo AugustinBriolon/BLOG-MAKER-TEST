@@ -46,7 +46,7 @@ export default function CustomCursor() {
     <>
       {/* Small precision dot */}
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 bg-amber-400 rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
         animate={{
           x: mousePosition.x - 4,
           y: mousePosition.y - 4,
@@ -56,15 +56,15 @@ export default function CustomCursor() {
 
       {/* Outer magnetic ring */}
       <motion.div
-        className="fixed top-0 left-0 rounded-full border border-amber-400/50 pointer-events-none z-[9998] mix-blend-screen"
+        className="fixed top-0 left-0 rounded-full border border-white/30 pointer-events-none z-[9998]"
         animate={{
           x: mousePosition.x - (isHovered ? 24 : 16),
           y: mousePosition.y - (isHovered ? 24 : 16),
           width: isHovered ? 48 : 32,
           height: isHovered ? 48 : 32,
           scale: isHovered ? 1.2 : 1,
-          borderColor: isHovered ? 'rgba(245, 158, 11, 0.9)' : 'rgba(245, 158, 11, 0.35)',
-          backgroundColor: isHovered ? 'rgba(245, 158, 11, 0.08)' : 'rgba(245, 158, 11, 0)',
+          borderColor: isHovered ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.25)',
+          backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0)',
         }}
         transition={{type: 'spring', damping: 25, stiffness: 300, mass: 0.2}}
       />
