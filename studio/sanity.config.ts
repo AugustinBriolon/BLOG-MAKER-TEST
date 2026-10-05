@@ -18,8 +18,9 @@ import {
 import {assist} from '@sanity/assist'
 
 // Environment variables for project configuration
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID'
-const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID?.trim() || '1bl9u0y1'
+const rawDataset = process.env.SANITY_STUDIO_DATASET?.trim()
+const dataset = !rawDataset || rawDataset === projectId ? 'production' : rawDataset
 
 // URL for preview functionality, defaults to bound FRONTEND_URL or window origin or localhost:3000
 const SANITY_STUDIO_PREVIEW_URL =

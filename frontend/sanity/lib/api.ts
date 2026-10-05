@@ -11,11 +11,14 @@ function assertValue<T>(v: T | undefined, errorMessage: string): T {
   return v
 }
 
-export const dataset =
-  process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
-
 export const projectId =
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '1bl9u0y1'
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID?.trim() || '1bl9u0y1'
+
+const rawDataset = process.env.NEXT_PUBLIC_SANITY_DATASET?.trim()
+export const dataset =
+  !rawDataset || rawDataset === projectId
+    ? 'production'
+    : rawDataset
 
 /**
  * see https://www.sanity.io/docs/api-versioning for how versioning works
