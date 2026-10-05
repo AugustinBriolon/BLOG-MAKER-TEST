@@ -88,9 +88,7 @@ export default function DedicatedArticleView({
               BLOG
             </Link>
             <span className="text-zinc-700">/</span>
-            <span className="text-zinc-400 truncate max-w-[200px] sm:max-w-xs">
-              {title}
-            </span>
+            <span className="text-zinc-400 truncate max-w-[200px] sm:max-w-xs">{title}</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -224,10 +222,7 @@ export default function DedicatedArticleView({
         {/* Article Body Content */}
         {isSanity && sanityPost?.content?.length ? (
           <div className="prose prose-invert prose-zinc prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white prose-a:text-white hover:prose-a:underline prose-p:text-zinc-300 prose-p:font-light prose-p:leading-relaxed">
-            <PortableText
-              className="space-y-6"
-              value={sanityPost.content as PortableTextBlock[]}
-            />
+            <PortableText className="space-y-6" value={sanityPost.content as PortableTextBlock[]} />
           </div>
         ) : curatedArticle?.content?.length ? (
           <div className="space-y-12 text-zinc-300">
@@ -289,7 +284,9 @@ export default function DedicatedArticleView({
             </div>
             <h4 className="text-lg font-bold text-white">{authorName}</h4>
             <p className="text-sm text-zinc-400 font-light leading-relaxed">
-              Spécialiste de l&apos;architecture moteur CP3 et de l&apos;histoire de la gamme Sport Heritage Yamaha. Analyse rigoureuse axée sur la dynamique de pilotage et la fiabilité technique.
+              Spécialiste de l&apos;architecture moteur CP3 et de l&apos;histoire de la gamme Sport
+              Heritage Yamaha. Analyse rigoureuse axée sur la dynamique de pilotage et la fiabilité
+              technique.
             </p>
           </div>
         </div>
@@ -347,9 +344,7 @@ export default function DedicatedArticleView({
                     <h4 className="text-sm font-bold text-white group-hover:text-zinc-300 transition-colors line-clamp-2">
                       {rel.title}
                     </h4>
-                    <p className="text-xs text-zinc-500 font-light line-clamp-2">
-                      {rel.excerpt}
-                    </p>
+                    <p className="text-xs text-zinc-500 font-light line-clamp-2">{rel.excerpt}</p>
                   </div>
                   <div className="pt-4 mt-4 border-t border-white/[0.06] flex items-center justify-between font-mono text-[11px] text-zinc-500">
                     <span>{rel.readTime}</span>

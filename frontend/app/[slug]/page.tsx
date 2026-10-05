@@ -65,11 +65,7 @@ async function DynamicPage({params}: Pick<PageProps<'/[slug]'>, 'params'>) {
 }
 
 // Layer 3: Cached component
-async function CachedPage({
-  slug,
-  perspective,
-  stega,
-}: {slug: string} & DynamicFetchOptions) {
+async function CachedPage({slug, perspective, stega}: {slug: string} & DynamicFetchOptions) {
   'use cache'
   const {data: page} = await sanityFetch({
     query: getPageQuery,

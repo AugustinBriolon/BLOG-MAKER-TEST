@@ -99,11 +99,7 @@ async function DynamicPostPage({params}: Pick<PageProps<'/posts/[slug]'>, 'param
 }
 
 // Layer 3: Cached component
-async function CachedPostPage({
-  slug,
-  perspective,
-  stega,
-}: {slug: string} & DynamicFetchOptions) {
+async function CachedPostPage({slug, perspective, stega}: {slug: string} & DynamicFetchOptions) {
   'use cache'
   const {data: post} = await sanityFetch({
     query: postQuery,

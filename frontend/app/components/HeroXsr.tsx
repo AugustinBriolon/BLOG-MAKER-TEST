@@ -72,7 +72,9 @@ export default function HeroXsr() {
             </div>
 
             <p className="text-base sm:text-lg text-zinc-400 max-w-xl font-light leading-relaxed">
-              L’harmonie brute entre le 3-cylindres Crossplane <strong className="text-white font-normal">CP3</strong> et la précision chirurgicale du cadre Deltabox. Chroniques d&apos;essais, atelier mécanique et culture Grand Prix.
+              L’harmonie brute entre le 3-cylindres Crossplane{' '}
+              <strong className="text-white font-normal">CP3</strong> et la précision chirurgicale
+              du cadre Deltabox. Chroniques d&apos;essais, atelier mécanique et culture Grand Prix.
             </p>
 
             {/* CTAs */}
@@ -197,22 +199,30 @@ export default function HeroXsr() {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/[0.08] pt-6 font-mono text-xs">
           <div className="space-y-1">
-            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">01 // CHÂSSIS</span>
+            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+              01 // CHÂSSIS
+            </span>
             <p className="text-white font-medium">Deltabox Aluminium CF</p>
           </div>
 
           <div className="space-y-1">
-            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">02 // FREINAGE</span>
+            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+              02 // FREINAGE
+            </span>
             <p className="text-white font-medium">Brembo Radial 16 mm</p>
           </div>
 
           <div className="space-y-1">
-            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">03 // TRANSMISSION</span>
+            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+              03 // TRANSMISSION
+            </span>
             <p className="text-white font-medium">Shifter QSS Up/Down</p>
           </div>
 
           <div className="space-y-1">
-            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">04 // ASSISTANCE</span>
+            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
+              04 // ASSISTANCE
+            </span>
             <p className="text-white font-medium">Centrale IMU 6 Axes</p>
           </div>
         </div>
@@ -220,4 +230,3 @@ export default function HeroXsr() {
     </section>
   )
 }
-

@@ -54,4 +54,3 @@ export async function sanityFetchMetadata<const QueryString extends string>({
   const {data} = await sanityFetch({query, params, perspective, stega: false})
   return {data}
 }
-

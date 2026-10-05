@@ -17,7 +17,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
   const headersList = await headers()
   const host = headersList.get('host') || 'localhost:3000'
-  const proto = headersList.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https')
+  const proto =
+    headersList.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https')
   const baseUrl = `${proto}://${host}`
 
   const sitemap: MetadataRoute.Sitemap = []

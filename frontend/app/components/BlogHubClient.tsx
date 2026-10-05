@@ -3,14 +3,7 @@
 import {useState, useMemo} from 'react'
 import Link from 'next/link'
 import {motion, AnimatePresence} from 'framer-motion'
-import {
-  Search,
-  Clock,
-  ArrowRight,
-  ExternalLink,
-  BookOpen,
-  Filter,
-} from 'lucide-react'
+import {Search, Clock, ArrowRight, ExternalLink, BookOpen, Filter} from 'lucide-react'
 import {studioUrl} from '@/sanity/lib/api'
 
 export interface BlogItem {
@@ -97,7 +90,8 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
           </h1>
 
           <p className="text-lg sm:text-xl text-zinc-400 font-light leading-relaxed max-w-2xl">
-            Essais approfondis, optimisations du bloc 3-cylindres CP3, fiches de préparation café racer et manuels d&apos;atelier exclusifs.
+            Essais approfondis, optimisations du bloc 3-cylindres CP3, fiches de préparation café
+            racer et manuels d&apos;atelier exclusifs.
           </p>
         </div>
       </div>
@@ -112,9 +106,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
                   <span className="border border-amber-500/30 bg-amber-500/10 text-amber-400 px-3 py-1 rounded font-bold uppercase tracking-wider">
                     ★ DOSSIER À LA UNE
                   </span>
-                  <span className="text-zinc-500 uppercase">
-                    {featuredArticle.category}
-                  </span>
+                  <span className="text-zinc-500 uppercase">{featuredArticle.category}</span>
                   <span className="text-zinc-500">•</span>
                   <span className="text-zinc-500 flex items-center gap-1">
                     <Clock className="h-3 w-3" />
@@ -123,9 +115,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
                 </div>
 
                 <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight uppercase group-hover:text-zinc-200 transition-colors">
-                  <Link href={`/blog/${featuredArticle.slug}`}>
-                    {featuredArticle.title}
-                  </Link>
+                  <Link href={`/blog/${featuredArticle.slug}`}>{featuredArticle.title}</Link>
                 </h2>
 
                 <p className="text-zinc-300 text-sm sm:text-base font-light leading-relaxed">
@@ -211,7 +201,8 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
               Aucun article ne correspond à votre recherche
             </h3>
             <p className="text-zinc-400 text-sm font-light max-w-md mx-auto">
-              Essayez avec un autre mot-clé ou réinitialisez les filtres pour voir l&apos;intégralité des dossiers.
+              Essayez avec un autre mot-clé ou réinitialisez les filtres pour voir
+              l&apos;intégralité des dossiers.
             </p>
             <button
               onClick={() => {
@@ -250,9 +241,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
 
                     {/* Title */}
                     <h3 className="text-xl font-bold text-white group-hover:text-zinc-300 transition-colors tracking-tight leading-snug">
-                      <Link href={`/blog/${article.slug}`}>
-                        {article.title}
-                      </Link>
+                      <Link href={`/blog/${article.slug}`}>{article.title}</Link>
                     </h3>
 
                     {/* Excerpt */}
@@ -263,9 +252,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
 
                   {/* Footer */}
                   <div className="pt-6 mt-6 border-t border-white/[0.06] flex items-center justify-between font-mono text-xs">
-                    <span className="text-zinc-500 text-[11px]">
-                      {article.date}
-                    </span>
+                    <span className="text-zinc-500 text-[11px]">{article.date}</span>
 
                     <Link
                       href={`/blog/${article.slug}`}
@@ -292,7 +279,8 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
               Rédigez et publiez directement depuis Sanity Studio
             </h4>
             <p className="text-zinc-400 text-sm font-light leading-relaxed">
-              Tout nouvel article publié dans le Studio apparaît instantanément sur cette page grâce aux Cache Components et à Sanity Live.
+              Tout nouvel article publié dans le Studio apparaît instantanément sur cette page grâce
+              aux Cache Components et à Sanity Live.
             </p>
           </div>
 

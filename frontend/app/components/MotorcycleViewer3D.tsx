@@ -11,7 +11,6 @@ import {
   ZoomOut,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
 } from 'lucide-react'
 import {motion, AnimatePresence} from 'framer-motion'
 
@@ -25,7 +24,8 @@ const LIVERIES = [
     tag: 'MILLÉSIME 2025 HERO',
     colorHex: '#dc2626',
     accentHex: '#f59e0b',
-    description: 'Le rouge de course historique Yamaha réinterprété avec plaques blanches, carters noirs et jantes dorées SpinForged.',
+    description:
+      'Le rouge de course historique Yamaha réinterprété avec plaques blanches, carters noirs et jantes dorées SpinForged.',
     getUrl: (frameIndex: number) => {
       const idxStr = String(frameIndex + 1).padStart(3, '0')
       return `/images/xsr360/legend_red/frame_${idxStr}.webp`
@@ -96,31 +96,6 @@ export default function MotorcycleViewer3D() {
 
   const activeLivery = LIVERIES[selectedLivery]
 
-  // Preload local transparent frames into memory for instant zero-lag rendering
-  useEffect(() => {
-    const liveryId = activeLivery.id
-    if (!imagesCacheRef.current[liveryId]) {
-      imagesCacheRef.current[liveryId] = []
-    }
-
-    let loaded = 0
-    setLoadedCount(0)
-
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image()
-      img.src = activeLivery.getUrl(i)
-
-      img.onload = () => {
-        loaded++
-        setLoadedCount(loaded)
-        if (i === currentFrame) {
-          renderFrame(currentFrame)
-        }
-      }
-      imagesCacheRef.current[liveryId][i] = img
-    }
-  }, [selectedLivery])
-
   // Draw current frame onto canvas
   const renderFrame = useCallback(
     (frameIndex: number) => {
@@ -143,8 +118,38 @@ export default function MotorcycleViewer3D() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
       }
     },
-    [activeLivery],
+    [activeLivery.id],
   )
+
+  // Preload local transparent frames into memory for instant zero-lag rendering
+  useEffect(() => {
+    const liveryId = activeLivery.id
+    if (!imagesCacheRef.current[liveryId]) {
+      imagesCacheRef.current[liveryId] = []
+    }
+
+    let loaded = 0
+    let isCancelled = false
+
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image()
+      img.src = activeLivery.getUrl(i)
+
+      img.onload = () => {
+        if (isCancelled) return
+        loaded++
+        setLoadedCount(loaded)
+        if (i === currentFrame) {
+          renderFrame(currentFrame)
+        }
+      }
+      imagesCacheRef.current[liveryId][i] = img
+    }
+
+    return () => {
+      isCancelled = true
+    }
+  }, [activeLivery, currentFrame, renderFrame])
 
   useEffect(() => {
     renderFrame(currentFrame)
@@ -258,7 +263,10 @@ export default function MotorcycleViewer3D() {
       <div className="absolute top-6 inset-x-6 flex flex-wrap items-center justify-between gap-4 z-20 pointer-events-none">
         <div className="flex items-center gap-3">
           <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-amber-500/40 bg-black/80 px-4 py-1.5 font-mono text-xs text-amber-300 font-bold backdrop-blur shadow-lg shadow-amber-500/10">
-            <Rotate3d className="h-3.5 w-3.5 text-amber-400 animate-spin" style={{animationDuration: '6s'}} />
+            <Rotate3d
+              className="h-3.5 w-3.5 text-amber-400 animate-spin"
+              style={{animationDuration: '6s'}}
+            />
             <span>YAMAHA XSR 900 // STUDIO DARK 360°</span>
           </div>
 
@@ -339,7 +347,9 @@ export default function MotorcycleViewer3D() {
           [ ORIENTATION // {angleDegrees}° ]
         </span>
         <div className="flex items-center gap-1.5 font-mono text-xs text-zinc-300 bg-black/70 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur">
-          <span className="text-amber-400 font-bold">ANGLE {String(currentFrame + 1).padStart(2, '0')}</span>
+          <span className="text-amber-400 font-bold">
+            ANGLE {String(currentFrame + 1).padStart(2, '0')}
+          </span>
           <span className="text-zinc-600">/</span>
           <span>{TOTAL_FRAMES}</span>
         </div>
@@ -473,7 +483,9 @@ export default function MotorcycleViewer3D() {
           <button
             onClick={() => setIsZoomed(!isZoomed)}
             className={`cursor-pointer p-2 rounded-xl text-xs font-mono transition-colors flex items-center gap-1.5 ${
-              isZoomed ? 'bg-amber-400 text-black font-bold' : 'text-zinc-300 hover:text-white hover:bg-white/5'
+              isZoomed
+                ? 'bg-amber-400 text-black font-bold'
+                : 'text-zinc-300 hover:text-white hover:bg-white/5'
             }`}
             title="Zoom 4K"
           >

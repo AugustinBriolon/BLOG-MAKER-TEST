@@ -70,7 +70,8 @@ export default function BentoSpecs() {
             </h2>
           </div>
           <p className="text-zinc-400 max-w-md font-light text-sm sm:text-base leading-relaxed">
-            Chaque composant est conçu avec la rigueur des prototypes de compétition et le dépouillement esthétique des années d’or.
+            Chaque composant est conçu avec la rigueur des prototypes de compétition et le
+            dépouillement esthétique des années d’or.
           </p>
         </div>
 
@@ -87,9 +88,7 @@ export default function BentoSpecs() {
                   <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400">
                     <span className="text-zinc-500">{spec.index}</span>
                     <span className="text-zinc-600">/</span>
-                    <span className="text-zinc-300 tracking-wider font-semibold">
-                      {spec.tag}
-                    </span>
+                    <span className="text-zinc-300 tracking-wider font-semibold">{spec.tag}</span>
                   </div>
                   <div className="h-8 w-8 rounded-lg border border-white/[0.08] bg-black flex items-center justify-center text-zinc-400">
                     <Icon className="h-4 w-4" />

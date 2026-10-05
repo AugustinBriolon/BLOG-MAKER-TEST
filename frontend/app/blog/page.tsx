@@ -21,10 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: `Le Blog XSR 900 // Dossiers & Essais Techniques`,
-    description:
-      settings?.description
-        ? 'Dossiers complets, guides d’entretien moteur CP3 et essais de la Yamaha XSR 900.'
-        : 'Actualités, essais détaillés et chroniques mécaniques de la Yamaha XSR 900.',
+    description: settings?.description
+      ? 'Dossiers complets, guides d’entretien moteur CP3 et essais de la Yamaha XSR 900.'
+      : 'Actualités, essais détaillés et chroniques mécaniques de la Yamaha XSR 900.',
   }
 }
 

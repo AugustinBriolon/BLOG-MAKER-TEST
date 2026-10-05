@@ -84,7 +84,9 @@ export default function TachometerSound() {
   const initAudio = useCallback(() => {
     if (audioCtxRef.current) return
     try {
-      const Ctx = window.AudioContext || (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext
+      const Ctx =
+        window.AudioContext ||
+        (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext
       const ctx = new Ctx()
       audioCtxRef.current = ctx
       const t = ctx.currentTime
@@ -177,7 +179,7 @@ export default function TachometerSound() {
       oscH3.frequency.setValueAtTime(idleFF * 3, t)
       oscH3.detune.setValueAtTime(-5, t)
       const gH3 = ctx.createGain()
-      gH3.gain.setValueAtTime(0.10, t)
+      gH3.gain.setValueAtTime(0.1, t)
       oscH3.connect(gH3)
       gH3.connect(driveGain)
       oscH3.start()
@@ -282,7 +284,9 @@ export default function TachometerSound() {
       const rateUp = engineMode === 'A' ? 16 : engineMode === 'STD' ? 12 : 9
       const rateDown = 5.5 // slower decel simulates flywheel inertia
       const speed = currentRpmRef.current < targetRpmRef.current ? rateUp : rateDown
-      const newRpm = currentRpmRef.current + (targetRpmRef.current - currentRpmRef.current) * Math.min(dt * speed, 1)
+      const newRpm =
+        currentRpmRef.current +
+        (targetRpmRef.current - currentRpmRef.current) * Math.min(dt * speed, 1)
       currentRpmRef.current = newRpm
 
       // Update React state at 30fps to avoid excessive rerenders
@@ -309,10 +313,10 @@ export default function TachometerSound() {
         const rpmNorm = (newRpm - 1300) / (11500 - 1300) // 0..1
 
         // Fundamental: strong throughout, slight dip at very high RPM (exhaust rasp takes over)
-        gainFundRef.current?.gain.setTargetAtTime(0.30 + rpmNorm * 0.10, t, ramp)
+        gainFundRef.current?.gain.setTargetAtTime(0.3 + rpmNorm * 0.1, t, ramp)
 
         // 2nd harmonic: grows with RPM (exhaust bark)
-        gainH2Ref.current?.gain.setTargetAtTime(0.15 + rpmNorm * 0.20, t, ramp)
+        gainH2Ref.current?.gain.setTargetAtTime(0.15 + rpmNorm * 0.2, t, ramp)
 
         // 3rd harmonic: mechanical knock, fades in mid-range then strong at high RPM
         gainH3Ref.current?.gain.setTargetAtTime(0.05 + rpmNorm * rpmNorm * 0.18, t, ramp)
@@ -321,10 +325,10 @@ export default function TachometerSound() {
         gainH4Ref.current?.gain.setTargetAtTime(0.02 + rpmNorm * rpmNorm * rpmNorm * 0.14, t, ramp)
 
         // Sub-harmonic: strongest at low RPM (deep rumble), fades slightly at high RPM
-        gainSubRef.current?.gain.setTargetAtTime(0.20 - rpmNorm * 0.08, t, ramp)
+        gainSubRef.current?.gain.setTargetAtTime(0.2 - rpmNorm * 0.08, t, ramp)
 
         // LFO depth: more pronounced pulse at low RPM, smoother at high RPM
-        lfoGainRef.current?.gain.setTargetAtTime(0.18 - rpmNorm * 0.10, t, ramp)
+        lfoGainRef.current?.gain.setTargetAtTime(0.18 - rpmNorm * 0.1, t, ramp)
 
         // Intake noise: rises dramatically with RPM
         noiseGainRef.current?.gain.setTargetAtTime(0.015 + rpmNorm * rpmNorm * 0.08, t, ramp)
@@ -386,7 +390,8 @@ export default function TachometerSound() {
               </span>
             </div>
             <p className="text-[11px] text-zinc-500 font-mono">
-              Synthèse physique temps réel : 3 cylindres, calage 240° entre allumages, fréquence de combustion = RPM × 1.5 / 60
+              Synthèse physique temps réel : 3 cylindres, calage 240° entre allumages, fréquence de
+              combustion = RPM × 1.5 / 60
             </p>
           </div>
         </div>
@@ -399,9 +404,7 @@ export default function TachometerSound() {
                 key={m}
                 onClick={() => setEngineMode(m)}
                 className={`px-2.5 py-1 rounded transition-all font-semibold cursor-pointer ${
-                  engineMode === m
-                    ? 'bg-white text-black'
-                    : 'text-zinc-500 hover:text-white'
+                  engineMode === m ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'
                 }`}
               >
                 MODE {m}
@@ -418,7 +421,11 @@ export default function TachometerSound() {
                 : 'bg-black border-white/[0.08] text-zinc-400 hover:text-white'
             }`}
           >
-            {audioEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+            {audioEnabled ? (
+              <Volume2 className="h-3.5 w-3.5" />
+            ) : (
+              <VolumeX className="h-3.5 w-3.5" />
+            )}
             <span>{audioEnabled ? 'SON ACTIF' : 'ACTIVER SON'}</span>
           </button>
         </div>
@@ -429,8 +436,14 @@ export default function TachometerSound() {
         {/* Digital Readout */}
         <div className="md:col-span-5 flex flex-col justify-center space-y-2">
           <div className="font-mono text-[11px] uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
-            <span className={`h-1.5 w-1.5 rounded-full ${isRedline ? 'bg-red-500 animate-ping' : powerBand ? 'bg-amber-400' : 'bg-white'}`} />
-            {isRedline ? 'ZONE RUPTEUR' : powerBand ? 'PLAGE DE PUISSANCE' : 'RÉGIME MOTEUR EN DIRECT'}
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${isRedline ? 'bg-red-500 animate-ping' : powerBand ? 'bg-amber-400' : 'bg-white'}`}
+            />
+            {isRedline
+              ? 'ZONE RUPTEUR'
+              : powerBand
+                ? 'PLAGE DE PUISSANCE'
+                : 'RÉGIME MOTEUR EN DIRECT'}
           </div>
           <div className="font-mono text-6xl md:text-7xl font-black tracking-tight text-white flex items-baseline gap-2">
             <span>{new Intl.NumberFormat('en-US').format(Math.round(rpm))}</span>
@@ -492,11 +505,7 @@ export default function TachometerSound() {
           <div className="relative h-1.5 w-full bg-black rounded-full overflow-hidden border border-white/[0.08]">
             <motion.div
               className={`h-full ${
-                isRedline
-                  ? 'bg-red-500'
-                  : powerBand
-                    ? 'bg-amber-400'
-                    : 'bg-white'
+                isRedline ? 'bg-red-500' : powerBand ? 'bg-amber-400' : 'bg-white'
               }`}
               style={{width: `${Math.min(100, rpmRatio * 100)}%`}}
               transition={{duration: 0.05}}
@@ -527,10 +536,13 @@ export default function TachometerSound() {
             <div className="flex items-end gap-1.5 h-16">
               {/* Sub-harmonic */}
               <div className="flex flex-col items-center gap-1 flex-1">
-                <div className="w-full bg-zinc-900 rounded-sm overflow-hidden relative" style={{height: '64px'}}>
+                <div
+                  className="w-full bg-zinc-900 rounded-sm overflow-hidden relative"
+                  style={{height: '64px'}}
+                >
                   <motion.div
                     className="absolute bottom-0 w-full bg-zinc-600 rounded-sm"
-                    style={{height: `${Math.max(8, (0.20 - rpmRatio * 0.08) / 0.20 * 100)}%`}}
+                    style={{height: `${Math.max(8, ((0.2 - rpmRatio * 0.08) / 0.2) * 100)}%`}}
                     transition={{duration: 0.1}}
                   />
                 </div>
@@ -538,10 +550,13 @@ export default function TachometerSound() {
               </div>
               {/* Fundamental */}
               <div className="flex flex-col items-center gap-1 flex-1">
-                <div className="w-full bg-zinc-900 rounded-sm overflow-hidden relative" style={{height: '64px'}}>
+                <div
+                  className="w-full bg-zinc-900 rounded-sm overflow-hidden relative"
+                  style={{height: '64px'}}
+                >
                   <motion.div
                     className="absolute bottom-0 w-full bg-white rounded-sm"
-                    style={{height: `${Math.max(12, (0.30 + rpmRatio * 0.10) / 0.40 * 100)}%`}}
+                    style={{height: `${Math.max(12, ((0.3 + rpmRatio * 0.1) / 0.4) * 100)}%`}}
                     transition={{duration: 0.1}}
                   />
                 </div>
@@ -549,10 +564,13 @@ export default function TachometerSound() {
               </div>
               {/* 2nd harmonic */}
               <div className="flex flex-col items-center gap-1 flex-1">
-                <div className="w-full bg-zinc-900 rounded-sm overflow-hidden relative" style={{height: '64px'}}>
+                <div
+                  className="w-full bg-zinc-900 rounded-sm overflow-hidden relative"
+                  style={{height: '64px'}}
+                >
                   <motion.div
                     className="absolute bottom-0 w-full bg-zinc-300 rounded-sm"
-                    style={{height: `${Math.max(8, (0.15 + rpmRatio * 0.20) / 0.35 * 100)}%`}}
+                    style={{height: `${Math.max(8, ((0.15 + rpmRatio * 0.2) / 0.35) * 100)}%`}}
                     transition={{duration: 0.1}}
                   />
                 </div>
@@ -560,10 +578,15 @@ export default function TachometerSound() {
               </div>
               {/* 3rd harmonic */}
               <div className="flex flex-col items-center gap-1 flex-1">
-                <div className="w-full bg-zinc-900 rounded-sm overflow-hidden relative" style={{height: '64px'}}>
+                <div
+                  className="w-full bg-zinc-900 rounded-sm overflow-hidden relative"
+                  style={{height: '64px'}}
+                >
                   <motion.div
                     className="absolute bottom-0 w-full bg-zinc-400 rounded-sm"
-                    style={{height: `${Math.max(5, (0.05 + rpmRatio * rpmRatio * 0.18) / 0.23 * 100)}%`}}
+                    style={{
+                      height: `${Math.max(5, ((0.05 + rpmRatio * rpmRatio * 0.18) / 0.23) * 100)}%`,
+                    }}
                     transition={{duration: 0.1}}
                   />
                 </div>
@@ -571,10 +594,15 @@ export default function TachometerSound() {
               </div>
               {/* 4th harmonic */}
               <div className="flex flex-col items-center gap-1 flex-1">
-                <div className="w-full bg-zinc-900 rounded-sm overflow-hidden relative" style={{height: '64px'}}>
+                <div
+                  className="w-full bg-zinc-900 rounded-sm overflow-hidden relative"
+                  style={{height: '64px'}}
+                >
                   <motion.div
                     className="absolute bottom-0 w-full bg-zinc-500 rounded-sm"
-                    style={{height: `${Math.max(3, (0.02 + rpmRatio ** 3 * 0.14) / 0.16 * 100)}%`}}
+                    style={{
+                      height: `${Math.max(3, ((0.02 + rpmRatio ** 3 * 0.14) / 0.16) * 100)}%`,
+                    }}
                     transition={{duration: 0.1}}
                   />
                 </div>
@@ -582,10 +610,15 @@ export default function TachometerSound() {
               </div>
               {/* Noise */}
               <div className="flex flex-col items-center gap-1 flex-1">
-                <div className="w-full bg-zinc-900 rounded-sm overflow-hidden relative" style={{height: '64px'}}>
+                <div
+                  className="w-full bg-zinc-900 rounded-sm overflow-hidden relative"
+                  style={{height: '64px'}}
+                >
                   <motion.div
                     className="absolute bottom-0 w-full bg-amber-400/60 rounded-sm"
-                    style={{height: `${Math.max(3, (0.015 + rpmRatio * rpmRatio * 0.08) / 0.095 * 100)}%`}}
+                    style={{
+                      height: `${Math.max(3, ((0.015 + rpmRatio * rpmRatio * 0.08) / 0.095) * 100)}%`,
+                    }}
                     transition={{duration: 0.1}}
                   />
                 </div>
@@ -600,10 +633,12 @@ export default function TachometerSound() {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/[0.08]">
         <div className="space-y-1">
           <p className="text-xs text-zinc-400 font-mono">
-            Maintenez le bouton pour simuler l&apos;ouverture de la poignée d&apos;accélérateur APSG ride-by-wire.
+            Maintenez le bouton pour simuler l&apos;ouverture de la poignée d&apos;accélérateur APSG
+            ride-by-wire.
           </p>
           <p className="text-[10px] text-zinc-600 font-mono">
-            Modèle acoustique : fondamentale + 4 harmoniques + sous-harmonique + bruit d&apos;admission + saturation d&apos;échappement + LFO de pulsation cylindre
+            Modèle acoustique : fondamentale + 4 harmoniques + sous-harmonique + bruit
+            d&apos;admission + saturation d&apos;échappement + LFO de pulsation cylindre
           </p>
         </div>
 
@@ -629,7 +664,13 @@ export default function TachometerSound() {
             }`}
           >
             <Zap className="h-3.5 w-3.5" />
-            <span>{isRevving ? (isRedline ? 'RUPTEUR !' : 'POIGNÉE EN COIN !') : 'MAINTENIR POUR ACCÉLÉRER'}</span>
+            <span>
+              {isRevving
+                ? isRedline
+                  ? 'RUPTEUR !'
+                  : 'POIGNÉE EN COIN !'
+                : 'MAINTENIR POUR ACCÉLÉRER'}
+            </span>
           </button>
         </div>
       </div>

@@ -42,7 +42,10 @@ async function CachedPage({perspective, stega}: DynamicFetchOptions) {
       <HeroXsr />
 
       {/* 2. Interactive 3D WebGL Showroom Section */}
-      <section id="showroom-3d" className="py-16 md:py-24 relative border-b border-white/[0.08] overflow-hidden">
+      <section
+        id="showroom-3d"
+        className="py-16 md:py-24 relative border-b border-white/[0.08] overflow-hidden"
+      >
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div className="space-y-3">
@@ -54,7 +57,8 @@ async function CachedPage({perspective, stega}: DynamicFetchOptions) {
               </h2>
             </div>
             <p className="text-zinc-400 text-sm sm:text-base font-light max-w-md">
-              Faites pivoter la machine à 360°, zoomez sur les détails mécaniques et observez la rotation cinématique asservie au scroll.
+              Faites pivoter la machine à 360°, zoomez sur les détails mécaniques et observez la
+              rotation cinématique asservie au scroll.
             </p>
           </div>
 
@@ -76,7 +80,8 @@ async function CachedPage({perspective, stega}: DynamicFetchOptions) {
               LE HURLEMENT DU 3-CYLINDRES
             </h2>
             <p className="text-zinc-400 text-sm sm:text-base font-light leading-relaxed">
-              Faites monter l&apos;aiguille du compte-tours pour écouter la signature acoustique brute du vilebrequin calé à 120°.
+              Faites monter l&apos;aiguille du compte-tours pour écouter la signature acoustique
+              brute du vilebrequin calé à 120°.
             </p>
           </div>
 

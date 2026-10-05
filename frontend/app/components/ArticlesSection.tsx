@@ -27,7 +27,13 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
   const hasSanityPosts = sanityPosts && sanityPosts.length > 0
 
   // Combine or select items
-  const categories = ['TOUS', 'ESSAIS & TESTS', 'ACCESSOIRES & SON', 'CUSTOM & ATELIER', 'MOTEUR & TECHNIQUE']
+  const categories = [
+    'TOUS',
+    'ESSAIS & TESTS',
+    'ACCESSOIRES & SON',
+    'CUSTOM & ATELIER',
+    'MOTEUR & TECHNIQUE',
+  ]
 
   const displayItems = hasSanityPosts
     ? sanityPosts.map((p) => ({
@@ -126,9 +132,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
 
                   {/* Title & Excerpt */}
                   <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-zinc-300 transition-colors tracking-tight leading-snug mb-3">
-                    <Link href={`/blog/${article.slug}`}>
-                      {article.title}
-                    </Link>
+                    <Link href={`/blog/${article.slug}`}>{article.title}</Link>
                   </h3>
 
                   <p className="text-zinc-400 text-sm leading-relaxed font-light line-clamp-3 mb-6">
@@ -138,9 +142,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
 
                 {/* Footer of Card */}
                 <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between font-mono text-xs">
-                  <span className="text-zinc-500 text-[11px]">
-                    {article.date}
-                  </span>
+                  <span className="text-zinc-500 text-[11px]">{article.date}</span>
 
                   <Link
                     href={`/blog/${article.slug}`}
@@ -166,7 +168,12 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
               Publication en direct depuis le CMS Sanity
             </h4>
             <p className="text-zinc-400 text-sm font-light leading-relaxed">
-              Vos articles rédigés dans le Studio Sanity s&apos;affichent immédiatement ici grâce au composant <code className="text-white bg-black px-1.5 py-0.5 rounded border border-white/[0.08] font-mono text-xs">&lt;SanityLive&gt;</code> et au cache intelligent.
+              Vos articles rédigés dans le Studio Sanity s&apos;affichent immédiatement ici grâce au
+              composant{' '}
+              <code className="text-white bg-black px-1.5 py-0.5 rounded border border-white/[0.08] font-mono text-xs">
+                &lt;SanityLive&gt;
+              </code>{' '}
+              et au cache intelligent.
             </p>
           </div>
 

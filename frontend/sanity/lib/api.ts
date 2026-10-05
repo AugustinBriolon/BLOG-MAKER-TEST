@@ -11,14 +11,10 @@ export function assertValue<T>(v: T | undefined, errorMessage: string): T {
   return v
 }
 
-export const projectId =
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID?.trim() || '1bl9u0y1'
+export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID?.trim() || '1bl9u0y1'
 
 const rawDataset = process.env.NEXT_PUBLIC_SANITY_DATASET?.trim()
-export const dataset =
-  !rawDataset || rawDataset === projectId
-    ? 'production'
-    : rawDataset
+export const dataset = !rawDataset || rawDataset === projectId ? 'production' : rawDataset
 
 /**
  * see https://www.sanity.io/docs/api-versioning for how versioning works
@@ -29,6 +25,4 @@ export const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2025-09
  * Used to configure edit intent links, for Presentation Mode, as well as to configure where the Studio is mounted in the router.
  */
 export const studioUrl =
-  process.env.NEXT_PUBLIC_SANITY_STUDIO_URL ||
-  process.env.STUDIO_URL ||
-  '/studio'
+  process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || process.env.STUDIO_URL || '/studio'

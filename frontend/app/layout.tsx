@@ -50,6 +50,9 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       images: ogImage ? [ogImage] : [],
     },
+    verification: {
+      google: 'Ou7Z9Vh9IOICDBGc1TRKhWy-mlGZYcjVMJ0_LeHWOn8',
+    },
   }
 }
 
@@ -72,6 +75,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
   return (
     <html
       lang="fr"
+      suppressHydrationWarning
       className={`${inter.variable} ${ibmPlexMono.variable} bg-black text-zinc-100 antialiased selection:bg-white selection:text-black`}
     >
       <body className="bg-black text-zinc-100 min-h-screen overflow-x-hidden">
