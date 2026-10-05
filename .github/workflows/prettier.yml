@@ -18,31 +18,15 @@ concurrency:
 
 jobs:
   run:
-    name: Can the code be prettier? 🤔
+    name: Prettier Check
     runs-on: ubuntu-latest
-    # workflow_dispatch always lets you select the branch ref, even though in this case we only ever want to run the action on `main` this we need an if check
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - uses: actions/setup-node@v6
-      with:
-        cache: npm
-        node-version: lts/*
+      - uses: actions/setup-node@v6
+        with:
+          cache: npm
+          node-version: lts/*
 
-    - run: npm ci
-    - run: npm run format
-    
-    - uses: actions/create-github-app-token@v3
-      id: generate-token
-      with:
-        app-id: ${{ secrets.ECOSPARK_APP_ID }}
-        private-key: ${{ secrets.ECOSPARK_APP_PRIVATE_KEY }}
-    - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
-      with:
-        body: I ran `pnpm format` 🧑‍💻
-        branch: actions/prettier
-        commit-message: "chore(prettier): 🤖 ✨"
-        labels: 🤖 bot
-        sign-commits: true
-        title: "chore(prettier): 🤖 ✨"
-        token: ${{ steps.generate-token.outputs.token }}
+      - run: npm ci
+      - run: npx prettier --check .
