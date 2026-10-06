@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import {ArrowLeft, ArrowRight, Calendar, Clock, ExternalLink, User} from 'lucide-react'
+import {ArrowLeft, ArrowRight, Calendar, Clock, User} from 'lucide-react'
 import ArticleBody from '@/app/components/ArticleBody'
 import ArticleShareButton from '@/app/components/ArticleShareButton'
 import Image from '@/app/components/SanityImage'
 import {estimateReadTimeMinutes, formatAuthorName, formatFrenchDate} from '@/app/articleContent'
-import {studioUrl} from '@/sanity/lib/api'
 
 interface DedicatedArticleViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,14 +57,6 @@ export default function DedicatedArticleView({
 
           <div className="flex items-center gap-4">
             <ArticleShareButton title={title} />
-            <Link
-              href={studioUrl}
-              rel="nofollow noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1.5 text-zinc-500 hover:text-amber-400 transition-colors"
-            >
-              <ExternalLink className="h-3.5 w-3.5" />
-              <span>ÉDITER</span>
-            </Link>
           </div>
         </div>
       </div>

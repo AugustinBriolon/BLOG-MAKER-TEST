@@ -3,6 +3,7 @@ import {draftMode} from 'next/headers'
 import {Suspense} from 'react'
 
 import BlogHubClient, {type BlogItem} from '@/app/components/BlogHubClient'
+import {BLOG_MAGAZINE_CATEGORIES, resolveBlogMagazineCategory} from '@/app/blogCategory'
 import {
   getDynamicFetchOptions,
   sanityFetch,
@@ -59,39 +60,39 @@ async function CachedBlogPage({perspective, stega}: DynamicFetchOptions) {
   let articles: BlogItem[] = []
 
   if (hasSanity) {
-    articles = sanityPosts.map((p) => ({
-      _id: p._id,
-      title: p.title || 'Sans titre',
-      slug: p.slug || '',
-      category: 'DOSSIER CMS',
-      readTime: '5 min de lecture',
-      date: p.date
-        ? new Date(p.date).toLocaleDateString('fr-FR', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })
-        : 'Récemment',
-      excerpt: p.excerpt || 'Consultez le dossier complet rédigé dans le CMS.',
-      tag: 'SANITY PUBLIÉ',
-      highlight: 'CMS EN DIRECT',
-      isSanity: true,
-      authorName:
-        p.author?.firstName && p.author?.lastName
-          ? `${p.author.firstName} ${p.author.lastName}`
-          : undefined,
-    }))
+    articles = sanityPosts.map((p) => {
+      const category = resolveBlogMagazineCategory({
+        categoryTitle: p.category?.title,
+        categorySlug: p.category?.slug,
+        tags: p.tags,
+        title: p.title,
+        keywordPrimary: p.keywordPrimary,
+      })
+      return {
+        _id: p._id,
+        title: p.title || 'Sans titre',
+        slug: p.slug || '',
+        category,
+        readTime: '5 min de lecture',
+        date: p.date
+          ? new Date(p.date).toLocaleDateString('fr-FR', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          : 'Récemment',
+        excerpt: p.excerpt || 'Consultez le dossier complet.',
+        tag: category,
+        isSanity: true,
+        authorName:
+          p.author?.firstName && p.author?.lastName
+            ? `${p.author.firstName} ${p.author.lastName}`
+            : undefined,
+      }
+    })
   }
 
-  const categories = [
-    'TOUS',
-    'ESSAIS & TESTS',
-    'ACCESSOIRES & SON',
-    'CUSTOM & ATELIER',
-    'MOTEUR & TECHNIQUE',
-  ]
-
-  return <BlogHubClient articles={articles} categories={categories} />
+  return <BlogHubClient articles={articles} categories={[...BLOG_MAGAZINE_CATEGORIES]} />
 }
 
 function BlogFallback() {

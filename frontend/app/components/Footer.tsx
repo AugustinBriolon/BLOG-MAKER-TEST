@@ -1,8 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import {studioUrl} from '@/sanity/lib/api'
-import {ArrowUpRight} from 'lucide-react'
 
 export default function Footer() {
   const marqueeItems = [
@@ -87,21 +85,19 @@ export default function Footer() {
           {/* Links Col 2 */}
           <div className="md:col-span-3 space-y-3 font-mono text-xs">
             <span className="text-zinc-300 font-semibold uppercase tracking-wider block">
-              CMS & ARCHIVE
+              MAGAZINE
             </span>
             <ul className="space-y-2.5 text-zinc-500">
               <li>
-                <Link
-                  href={studioUrl}
-                  rel="nofollow noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors font-medium"
-                >
-                  <span>Sanity Studio</span>
-                  <ArrowUpRight className="h-3 w-3 text-zinc-500" />
+                <Link href="/blog" className="hover:text-white transition-colors">
+                  Tous les dossiers
                 </Link>
               </li>
-              <li className="text-zinc-600">Synchronisé avec Blog Maker</li>
-              <li className="text-zinc-600">Dataset : production</li>
+              <li>
+                <Link href="/#articles" className="hover:text-white transition-colors">
+                  Dernières publications
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

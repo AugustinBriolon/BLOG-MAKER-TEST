@@ -3,8 +3,7 @@
 import {useState, useMemo} from 'react'
 import Link from 'next/link'
 import {motion, AnimatePresence} from 'framer-motion'
-import {Search, Clock, ArrowRight, ExternalLink, BookOpen, Filter} from 'lucide-react'
-import {studioUrl} from '@/sanity/lib/api'
+import {Search, Clock, ArrowRight, BookOpen, Filter} from 'lucide-react'
 
 export interface BlogItem {
   _id: string
@@ -61,20 +60,9 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
             <span className="text-zinc-700">/</span>
             <span className="text-zinc-300">LE BLOG XSR 900</span>
           </div>
-
-          <div className="flex items-center gap-3">
-            <span className="border border-white/[0.08] bg-zinc-950 px-2.5 py-1 rounded text-zinc-400">
-              {articles.length} DOSSIERS INDEXÉS
-            </span>
-            <Link
-              href={studioUrl}
-              rel="nofollow noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors"
-            >
-              <ExternalLink className="h-3 w-3" />
-              <span>CMS STUDIO</span>
-            </Link>
-          </div>
+          <span className="border border-white/[0.08] bg-zinc-950 px-2.5 py-1 rounded text-zinc-400">
+            {articles.length} DOSSIERS INDEXÉS
+          </span>
         </div>
       </div>
 
@@ -268,30 +256,6 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
             </AnimatePresence>
           </div>
         )}
-
-        {/* CMS Sanity CTA */}
-        <div className="mt-20 rounded-2xl border border-dashed border-white/[0.15] bg-zinc-950 p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 max-w-xl">
-            <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400 uppercase tracking-widest">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              GESTION ÉDITORIALE INTÉGRÉE
-            </div>
-            <h4 className="text-xl font-bold text-white">
-              Rédigez et publiez directement depuis Sanity Studio
-            </h4>
-            <p className="text-zinc-400 text-sm font-light leading-relaxed">
-              Tout nouvel article publié dans le Studio apparaît instantanément sur cette page grâce
-              aux Cache Components et à Sanity Live.
-            </p>
-          </div>
-
-          <Link
-            href={studioUrl}
-            className="w-full sm:w-auto text-center rounded-lg bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold px-6 py-3 tracking-wider uppercase transition-colors"
-          >
-            OUVRIR LE STUDIO CMS
-          </Link>
-        </div>
       </div>
     </div>
   )
