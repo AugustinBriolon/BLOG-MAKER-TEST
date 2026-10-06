@@ -36,19 +36,4 @@ export const structure: StructureResolver = (S: StructureBuilder) =>
         .title('Configuration du Site (SEO & Meta)')
         .child(S.document().schemaType('settings').documentId('siteSettings'))
         .icon(CogIcon),
-
-      S.divider(),
-
-      // 5. Anciens schémas (archivés / disponibles si besoin)
-      S.listItem()
-        .title('Archives / Autres documents')
-        .child(
-          S.list()
-            .title('Autres documents')
-            .items([
-              S.documentTypeListItem('post').title('Anciens Posts'),
-              S.documentTypeListItem('person').title('Anciennes Personnes'),
-              S.documentTypeListItem('page').title('Pages modulaires'),
-            ]),
-        ),
     ])
