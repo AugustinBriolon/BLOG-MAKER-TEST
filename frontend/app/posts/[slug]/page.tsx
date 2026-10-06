@@ -4,7 +4,6 @@ import {notFound} from 'next/navigation'
 import {Suspense} from 'react'
 
 import DedicatedArticleView from '@/app/components/DedicatedArticleView'
-import {CURATED_ARTICLES} from '@/app/data/curated-articles'
 import {
   getDynamicFetchOptions,
   sanityFetch,
@@ -24,13 +23,10 @@ export async function generateStaticParams() {
   })
 
   const sanitySlugs = data?.filter((p) => Boolean(p.slug)) || []
-  const curatedSlugs = CURATED_ARTICLES.map((a) => ({slug: a.slug}))
-
-  const allSlugs = [...sanitySlugs, ...curatedSlugs]
-  if (allSlugs.length === 0) {
+  if (sanitySlugs.length === 0) {
     return [{slug: '_initialization'}]
   }
-  return allSlugs
+  return sanitySlugs
 }
 
 /**
@@ -71,24 +67,6 @@ export async function generateMetadata(
     } satisfies Metadata
   }
 
-  const fallback = CURATED_ARTICLES.find((a) => a.slug === slug)
-  if (fallback) {
-    return {
-      authors: [{name: fallback.author.name}],
-      title: fallback.title,
-      description: fallback.excerpt,
-      alternates: {
-        canonical: `/posts/${slug}`,
-      },
-      openGraph: {
-        title: `${fallback.title} | Dossier Yamaha XSR 900`,
-        description: fallback.excerpt,
-        type: 'article',
-        publishedTime: fallback.date,
-      },
-    } satisfies Metadata
-  }
-
   return {
     title: 'Dossier Introuvable | Yamaha XSR 900',
   } satisfies Metadata
@@ -124,13 +102,11 @@ async function CachedPostPage({slug, perspective, stega}: {slug: string} & Dynam
     stega,
   })
 
-  const curatedFallback = CURATED_ARTICLES.find((a) => a.slug === slug)
-
-  if (!post?._id && !curatedFallback) {
+  if (!post?._id) {
     return notFound()
   }
 
-  // Fetch or construct related articles
+  // Fetch related articles from Sanity
   let related: {
     slug: string
     title: string
@@ -139,40 +115,25 @@ async function CachedPostPage({slug, perspective, stega}: {slug: string} & Dynam
     excerpt: string
   }[] = []
 
-  if (post?._id) {
-    const {data: more} = await sanityFetch({
-      query: morePostsQuery,
-      params: {skip: post._id, limit: 3},
-      perspective,
-      stega,
-    })
-    if (more && more.length > 0) {
-      related = more.map((m) => ({
-        slug: m.slug || '',
-        title: m.title || 'Dossier XSR 900',
-        category: 'BLOG ARTICLE',
-        readTime: '5 min de lecture',
-        excerpt: m.excerpt || '',
-      }))
-    }
-  }
-
-  if (related.length === 0) {
-    related = CURATED_ARTICLES.filter((a) => a.slug !== slug)
-      .slice(0, 3)
-      .map((a) => ({
-        slug: a.slug,
-        title: a.title,
-        category: a.category,
-        readTime: a.readTime,
-        excerpt: a.excerpt,
-      }))
+  const {data: more} = await sanityFetch({
+    query: morePostsQuery,
+    params: {skip: post._id, limit: 3},
+    perspective,
+    stega,
+  })
+  if (more && more.length > 0) {
+    related = more.map((m) => ({
+      slug: m.slug || '',
+      title: m.title || 'Dossier XSR 900',
+      category: 'BLOG ARTICLE',
+      readTime: '5 min de lecture',
+      excerpt: m.excerpt || '',
+    }))
   }
 
   return (
     <DedicatedArticleView
-      sanityPost={post?._id ? post : undefined}
-      curatedArticle={curatedFallback}
+      sanityPost={post}
       relatedArticles={related}
     />
   )

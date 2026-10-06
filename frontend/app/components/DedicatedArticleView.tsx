@@ -17,12 +17,10 @@ import type {PortableTextBlock} from 'next-sanity'
 import PortableText from '@/app/components/PortableText'
 import Image from '@/app/components/SanityImage'
 import {studioUrl} from '@/sanity/lib/api'
-import type {CuratedArticle} from '@/app/data/curated-articles'
 
 interface DedicatedArticleViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sanityPost?: any
-  curatedArticle?: CuratedArticle | null
+  sanityPost: any
   relatedArticles?: {
     slug: string
     title: string
@@ -34,36 +32,28 @@ interface DedicatedArticleViewProps {
 
 export default function DedicatedArticleView({
   sanityPost,
-  curatedArticle,
   relatedArticles = [],
 }: DedicatedArticleViewProps) {
   const [copied, setCopied] = useState(false)
 
-  const isSanity = Boolean(sanityPost?._id)
-  const title = sanityPost?.title || curatedArticle?.title || 'Dossier XSR 900'
-  const excerpt = sanityPost?.excerpt || curatedArticle?.excerpt || ''
-  const category = curatedArticle?.category || 'BLOG & TECHNIQUE'
-  const readTime = curatedArticle?.readTime || '6 min de lecture'
+  const title = sanityPost?.title || 'Dossier XSR 900'
+  const excerpt = sanityPost?.excerpt || ''
+  const category = 'DOSSIER CMS'
+  const readTime = '5 min de lecture'
   const dateFormatted = sanityPost?.date
     ? new Date(sanityPost.date).toLocaleDateString('fr-FR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
       })
-    : curatedArticle?.date
-      ? new Date(curatedArticle.date).toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })
-      : 'Octobre 2026'
+    : 'Récemment'
 
   const authorName =
     sanityPost?.author?.firstName && sanityPost?.author?.lastName
       ? `${sanityPost.author.firstName} ${sanityPost.author.lastName}`
-      : curatedArticle?.author?.name || 'Rédaction XSR 900'
+      : 'Rédaction XSR 900'
 
-  const authorRole = curatedArticle?.author?.role || 'Chroniqueur Technique & Essais'
+  const authorRole = 'Chroniqueur Technique & Essais'
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -119,17 +109,10 @@ export default function DedicatedArticleView({
             <span className="border border-white/[0.1] bg-zinc-950 px-3 py-1 rounded font-mono text-xs text-amber-400 font-bold uppercase tracking-wider">
               {category}
             </span>
-            {isSanity ? (
-              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                CMS SANITY DIRECT
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-400 bg-zinc-900 border border-white/[0.08] px-2.5 py-1 rounded">
-                <CheckCircle2 className="h-3.5 w-3.5 text-zinc-500" />
-                DOSSIER DE RÉFÉRENCE
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1.5 font-mono text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              CMS SANITY DIRECT
+            </span>
           </div>
 
           {/* Title */}
@@ -169,25 +152,6 @@ export default function DedicatedArticleView({
           </div>
         </header>
 
-        {/* Technical Telemetry Strip (if stats provided) */}
-        {curatedArticle?.stats && curatedArticle.stats.length > 0 && (
-          <div className="mb-12 grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
-            {curatedArticle.stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-xl border border-white/[0.08] bg-zinc-950 p-4 space-y-1"
-              >
-                <span className="text-[10px] text-zinc-500 uppercase tracking-widest block">
-                  {stat.label}
-                </span>
-                <span className="text-sm font-bold text-white tracking-tight block">
-                  {stat.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Cover Image */}
         {sanityPost?.coverImage ? (
           <div className="mb-14 rounded-2xl overflow-hidden border border-white/[0.08] bg-zinc-950">
@@ -220,52 +184,9 @@ export default function DedicatedArticleView({
         )}
 
         {/* Article Body Content */}
-        {isSanity && sanityPost?.content?.length ? (
+        {sanityPost?.content?.length ? (
           <div className="prose prose-invert prose-zinc prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white prose-a:text-white hover:prose-a:underline prose-p:text-zinc-300 prose-p:font-light prose-p:leading-relaxed">
             <PortableText className="space-y-6" value={sanityPost.content as PortableTextBlock[]} />
-          </div>
-        ) : curatedArticle?.content?.length ? (
-          <div className="space-y-12 text-zinc-300">
-            {curatedArticle.content.map((section, idx) => (
-              <section key={idx} className="space-y-6">
-                {section.heading && (
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight border-b border-white/[0.06] pb-3">
-                    {section.heading}
-                  </h2>
-                )}
-
-                <div className="space-y-4 font-light text-base sm:text-lg leading-relaxed text-zinc-300">
-                  {section.paragraphs.map((p, pIdx) => (
-                    <p key={pIdx}>{p}</p>
-                  ))}
-                </div>
-
-                {section.quote && (
-                  <blockquote className="my-6 border-l-2 border-amber-400 bg-zinc-950 p-6 rounded-r-xl italic text-base sm:text-lg text-zinc-200">
-                    {section.quote}
-                  </blockquote>
-                )}
-
-                {section.specs && section.specs.length > 0 && (
-                  <div className="my-6 rounded-xl border border-white/[0.08] bg-zinc-950 overflow-hidden font-mono text-xs">
-                    <div className="bg-black px-4 py-2.5 border-b border-white/[0.08] font-bold text-zinc-300 uppercase tracking-widest text-[11px]">
-                      DONNÉES TECHNIQUES CERTIFIÉES
-                    </div>
-                    <div className="divide-y divide-white/[0.06]">
-                      {section.specs.map((spec) => (
-                        <div
-                          key={spec.label}
-                          className="flex items-center justify-between px-4 py-2.5 hover:bg-white/[0.02]"
-                        >
-                          <span className="text-zinc-400">{spec.label}</span>
-                          <span className="text-white font-semibold">{spec.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </section>
-            ))}
           </div>
         ) : (
           <div className="p-8 rounded-xl border border-white/[0.08] bg-zinc-950 font-mono text-xs text-zinc-400 text-center">

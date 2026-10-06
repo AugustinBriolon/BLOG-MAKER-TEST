@@ -2,7 +2,6 @@ import {MetadataRoute} from 'next'
 import {getDynamicFetchOptions, sanityFetchMetadata} from '@/sanity/lib/live'
 import {sitemapData} from '@/sanity/lib/queries'
 import {headers} from 'next/headers'
-import {CURATED_ARTICLES} from '@/app/data/curated-articles'
 
 /**
  * This file creates a sitemap (sitemap.xml) for the application. Learn more about sitemaps in Next.js here: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
@@ -34,18 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
     changeFrequency: 'daily',
   })
-
-  // If Sanity is empty, index curated articles
-  if (!allPostsAndPages?.data || allPostsAndPages.data.length === 0) {
-    for (const ca of CURATED_ARTICLES) {
-      sitemap.push({
-        url: `${baseUrl}/blog/${ca.slug}`,
-        lastModified: new Date(ca.date),
-        priority: 0.8,
-        changeFrequency: 'weekly',
-      })
-    }
-  }
 
   if (allPostsAndPages != null && allPostsAndPages.data.length != 0) {
     for (const p of allPostsAndPages.data) {
