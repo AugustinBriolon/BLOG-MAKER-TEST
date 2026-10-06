@@ -3,6 +3,8 @@ import {getDynamicFetchOptions, sanityFetchMetadata} from '@/sanity/lib/live'
 import {sitemapData} from '@/sanity/lib/queries'
 import {headers} from 'next/headers'
 
+export const revalidate = 3600
+
 /**
  * This file creates a sitemap (sitemap.xml) for the application. Learn more about sitemaps in Next.js here: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  * Be sure to update the `changeFrequency` and `priority` values to match your application's content.
