@@ -47,7 +47,7 @@ export function linkResolver(link: Link | DereferencedLink | undefined) {
         return `/posts/${link.post}`
       }
     default:
-      return null
+      return link.href || null
   }
 }
 

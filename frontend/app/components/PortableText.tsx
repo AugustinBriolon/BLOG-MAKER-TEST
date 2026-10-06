@@ -12,6 +12,22 @@ import {PortableText, type PortableTextComponents, type PortableTextBlock} from 
 import ResolvedLink from '@/app/components/ResolvedLink'
 import Image from '@/app/components/SanityImage'
 
+function HeadingAnchor({id}: {id?: string}) {
+  if (!id) {
+    return null
+  }
+
+  return (
+    <a
+      href={`#${id}`}
+      className="ml-2 inline-flex min-h-11 min-w-11 items-center justify-center align-middle text-zinc-600 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 hover:text-amber-400"
+      aria-label="Lien vers cette section"
+    >
+      #
+    </a>
+  )
+}
+
 export default function CustomPortableText({
   className,
   value,
@@ -27,82 +43,66 @@ export default function CustomPortableText({
         }
 
         return (
-          <figure className="my-8">
+          <figure className="my-10">
             <Image
               id={value.asset._ref}
               alt={value.alt || ''}
-              width={672}
+              width={720}
               crop={value.crop}
               mode="cover"
-              className="rounded-sm"
+              className="w-full rounded-md"
             />
+            {value.alt ? (
+              <figcaption className="mt-3 text-sm text-zinc-500">{value.alt}</figcaption>
+            ) : null}
           </figure>
         )
       },
     },
     block: {
       h1: ({children, value}) => (
-        // Add an anchor to the h1
-        <h1 className="group relative">
+        <h2 id={value?._key} className="group scroll-mt-28">
           {children}
-          <a
-            href={`#${value?._key}`}
-            className="absolute left-0 top-0 bottom-0 -ml-6 flex items-center opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-              />
-            </svg>
-          </a>
-        </h1>
+          <HeadingAnchor id={value?._key} />
+        </h2>
       ),
-      h2: ({children, value}) => {
-        // Add an anchor to the h2
-        return (
-          <h2 className="group relative">
-            {children}
-            <a
-              href={`#${value?._key}`}
-              className="absolute left-0 top-0 bottom-0 -ml-6 flex items-center opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                />
-              </svg>
-            </a>
-          </h2>
-        )
-      },
+      h2: ({children, value}) => (
+        <h2 id={value?._key} className="group scroll-mt-28">
+          {children}
+          <HeadingAnchor id={value?._key} />
+        </h2>
+      ),
+      h3: ({children, value}) => (
+        <h3 id={value?._key} className="group scroll-mt-28">
+          {children}
+          <HeadingAnchor id={value?._key} />
+        </h3>
+      ),
+      h4: ({children, value}) => (
+        <h4 id={value?._key} className="group scroll-mt-28">
+          {children}
+          <HeadingAnchor id={value?._key} />
+        </h4>
+      ),
+      blockquote: ({children}) => <blockquote>{children}</blockquote>,
     },
     marks: {
       link: ({children, value: link}) => {
+        const seoLink = link as {href?: string; linkType?: string; follow?: boolean} | undefined
+        if (seoLink?.href && !seoLink.linkType) {
+          return (
+            <a href={seoLink.href} rel={seoLink.follow === false ? 'nofollow' : undefined}>
+              {children}
+            </a>
+          )
+        }
         return <ResolvedLink link={link}>{children}</ResolvedLink>
       },
     },
   }
 
   return (
-    <div className={`prose-a:text-brand prose dark:prose-invert ${className}`}>
+    <div className={className}>
       <PortableText components={components} value={value} />
     </div>
   )

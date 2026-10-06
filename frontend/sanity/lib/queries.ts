@@ -10,6 +10,7 @@ const postFields = /* groq */ `
   "slug": slug.current,
   "excerpt": coalesce(metaDescription, excerpt, ""),
   "coverImage": coalesce(featuredImage, coverImage),
+  featuredImageAlt,
   "date": coalesce(publishedAt, date, _updatedAt),
   "author": coalesce(
     author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },
@@ -94,13 +95,26 @@ export const morePostsQuery = defineQuery(`
   }
 `)
 
+const portableTextProjection = /* groq */ `
+  ...,
+  markDefs[]{
+    ...,
+    ${linkReference}
+  }
+`
+
 export const postQuery = defineQuery(`
   *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {
+    body[]{
+      ${portableTextProjection}
+    },
     content[]{
-      ...,
-      markDefs[]{
+      ${portableTextProjection},
+      _type == "textBlock" => {
         ...,
-        ${linkReference}
+        body[]{
+          ${portableTextProjection}
+        }
       }
     },
     ${postFields}

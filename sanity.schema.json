@@ -1203,12 +1203,19 @@
           "type": "string"
         }
       },
+      "title": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "metaTitle": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
         },
-        "optional": false
+        "optional": true
       },
       "metaDescription": {
         "type": "objectAttribute",
@@ -1399,6 +1406,14 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "body": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "blockContentSeo"
         },
         "optional": true
       },

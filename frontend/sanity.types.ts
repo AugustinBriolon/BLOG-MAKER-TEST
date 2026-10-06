@@ -192,7 +192,8 @@ export type BlogPost = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  metaTitle: string
+  title?: string
+  metaTitle?: string
   metaDescription: string
   slug: Slug
   keywordPrimary: string
@@ -218,6 +219,7 @@ export type BlogPost = {
     text: string
     _key: string
   }>
+  body?: BlockContentSeo
   content?: Array<
     | ({
         _key: string
@@ -835,7 +837,7 @@ export type SitemapDataResult = Array<
 
 // Source: sanity/lib/queries.ts
 // Variable: allPostsQuery
-// Query: *[_type in ["post", "blogPost"] && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
+// Query: *[_type in ["post", "blogPost"] && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  featuredImageAlt,  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
 export type AllPostsQueryResult = Array<
   | {
       _id: string
@@ -851,6 +853,7 @@ export type AllPostsQueryResult = Array<
         crop?: SanityImageCrop
         _type: 'image'
       }
+      featuredImageAlt: string
       date: string
       author: {
         firstName: string
@@ -908,6 +911,7 @@ export type AllPostsQueryResult = Array<
         alt?: string
         _type: 'image'
       } | null
+      featuredImageAlt: null
       date: string
       author:
         | {
@@ -948,7 +952,7 @@ export type AllPostsQueryResult = Array<
 
 // Source: sanity/lib/queries.ts
 // Variable: morePostsQuery
-// Query: *[_type in ["post", "blogPost"] && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
+// Query: *[_type in ["post", "blogPost"] && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  featuredImageAlt,  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
 export type MorePostsQueryResult = Array<
   | {
       _id: string
@@ -964,6 +968,7 @@ export type MorePostsQueryResult = Array<
         crop?: SanityImageCrop
         _type: 'image'
       }
+      featuredImageAlt: string
       date: string
       author: {
         firstName: string
@@ -1021,6 +1026,7 @@ export type MorePostsQueryResult = Array<
         alt?: string
         _type: 'image'
       } | null
+      featuredImageAlt: null
       date: string
       author:
         | {
@@ -1061,9 +1067,30 @@ export type MorePostsQueryResult = Array<
 
 // Source: sanity/lib/queries.ts
 // Variable: postQuery
-// Query: *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {    content[]{      ...,      markDefs[]{        ...,          _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }      }    },      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
+// Query: *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {    body[]{        ...,  markDefs[]{    ...,      _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }  }    },    content[]{        ...,  markDefs[]{    ...,      _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }  },      _type == "textBlock" => {        ...,        body[]{            ...,  markDefs[]{    ...,      _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }  }        }      }    },      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  featuredImageAlt,  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
 export type PostQueryResult =
   | {
+      body: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h2' | 'h3' | 'h4' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs: Array<{
+          href?: string
+          follow?: boolean
+          _type: 'link'
+          _key: string
+          page: null
+          post: null
+        }> | null
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
       content: Array<
         | {
             _key: string
@@ -1074,7 +1101,27 @@ export type PostQueryResult =
         | {
             _key: string
             _type: 'textBlock'
-            body: BlockContentSeo
+            body: Array<{
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h2' | 'h3' | 'h4' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<{
+                href?: string
+                follow?: boolean
+                _type: 'link'
+                _key: string
+                page: null
+                post: null
+              }> | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }>
             markDefs: null
           }
       > | null
@@ -1091,6 +1138,7 @@ export type PostQueryResult =
         crop?: SanityImageCrop
         _type: 'image'
       }
+      featuredImageAlt: string
       date: string
       author: {
         firstName: string
@@ -1134,6 +1182,7 @@ export type PostQueryResult =
       schemaPrincipalType: 'Article' | 'BlogPosting' | null
     }
   | {
+      body: null
       content: Array<
         | {
             children?: Array<{
@@ -1181,6 +1230,7 @@ export type PostQueryResult =
         alt?: string
         _type: 'image'
       } | null
+      featuredImageAlt: null
       date: string
       author:
         | {
@@ -1240,9 +1290,9 @@ declare module '@sanity/client' {
     '*[_type == "settings"][0]': SettingsQueryResult
     '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
     '\n  *[_type in ["page", "post", "blogPost"] && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
-    '\n  *[_type in ["post", "blogPost"] && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': AllPostsQueryResult
-    '\n  *[_type in ["post", "blogPost"] && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': MorePostsQueryResult
-    '\n  *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {\n    content[]{\n      ...,\n      markDefs[]{\n        ...,\n        \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n    },\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': PostQueryResult
+    '\n  *[_type in ["post", "blogPost"] && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  featuredImageAlt,\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': AllPostsQueryResult
+    '\n  *[_type in ["post", "blogPost"] && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  featuredImageAlt,\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': MorePostsQueryResult
+    '\n  *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {\n    body[]{\n      \n  ...,\n  markDefs[]{\n    ...,\n    \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n  }\n\n    },\n    content[]{\n      \n  ...,\n  markDefs[]{\n    ...,\n    \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n  }\n,\n      _type == "textBlock" => {\n        ...,\n        body[]{\n          \n  ...,\n  markDefs[]{\n    ...,\n    \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n  }\n\n        }\n      }\n    },\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  featuredImageAlt,\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': PostQueryResult
     '\n  *[_type in ["post", "blogPost"] && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
   }
