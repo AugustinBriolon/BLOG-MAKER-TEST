@@ -91,6 +91,7 @@ export default function DedicatedArticleView({
             </button>
             <Link
               href={studioUrl}
+              rel="nofollow noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-amber-400 transition-colors"
             >
               <ExternalLink className="h-3.5 w-3.5" />

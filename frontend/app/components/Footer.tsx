@@ -93,6 +93,7 @@ export default function Footer() {
               <li>
                 <Link
                   href={studioUrl}
+                  rel="nofollow noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors font-medium"
                 >
                   <span>Sanity Studio</span>

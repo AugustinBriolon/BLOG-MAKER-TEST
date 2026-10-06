@@ -77,6 +77,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
             </Link>
             <Link
               href={studioUrl}
+              rel="nofollow noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-zinc-950 hover:bg-zinc-900 text-xs font-mono px-3.5 py-2 text-zinc-300 hover:text-white transition-colors"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
@@ -124,6 +125,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
             <div className="pt-2">
               <Link
                 href={studioUrl}
+                rel="nofollow noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold px-5 py-3 tracking-wider uppercase transition-colors"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />

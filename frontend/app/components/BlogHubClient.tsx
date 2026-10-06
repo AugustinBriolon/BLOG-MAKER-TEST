@@ -68,6 +68,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
             </span>
             <Link
               href={studioUrl}
+              rel="nofollow noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors"
             >
               <ExternalLink className="h-3 w-3" />
