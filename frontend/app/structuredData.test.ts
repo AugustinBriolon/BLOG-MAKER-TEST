@@ -28,6 +28,6 @@ describe('buildHomeJsonLd', () => {
 
   it('declares the French website', () => {
     const website = nodes.find((node) => node['@type'] === 'WebSite')
-    expect(website).toMatchObject({'name': 'Yamaha XSR 900 Hub', 'inLanguage': 'fr-FR'})
+    expect(website).toMatchObject({name: 'Yamaha XSR 900 Hub', inLanguage: 'fr-FR'})
   })
 })

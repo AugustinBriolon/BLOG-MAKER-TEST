@@ -182,7 +182,10 @@ export default function DedicatedArticleView({
                   AUTRES DOSSIERS LIÉS
                 </h2>
               </div>
-              <Link href="/blog" className="font-mono text-xs text-zinc-400 hover:text-white transition-colors">
+              <Link
+                href="/blog"
+                className="font-mono text-xs text-zinc-400 hover:text-white transition-colors"
+              >
                 TOUT VOIR →
               </Link>
             </div>
@@ -205,7 +208,9 @@ export default function DedicatedArticleView({
                   </div>
                   <div className="pt-4 mt-4 border-t border-white/[0.06] flex items-center justify-between font-mono text-[11px] text-zinc-500">
                     <span>{rel.readTime}</span>
-                    <span className="text-zinc-300 group-hover:text-white transition-colors">LIRE →</span>
+                    <span className="text-zinc-300 group-hover:text-white transition-colors">
+                      LIRE →
+                    </span>
                   </div>
                 </Link>
               ))}

@@ -131,12 +131,7 @@ async function CachedPostPage({slug, perspective, stega}: {slug: string} & Dynam
     }))
   }
 
-  return (
-    <DedicatedArticleView
-      sanityPost={post}
-      relatedArticles={related}
-    />
-  )
+  return <DedicatedArticleView sanityPost={post} relatedArticles={related} />
 }
 
 function PostFallback() {

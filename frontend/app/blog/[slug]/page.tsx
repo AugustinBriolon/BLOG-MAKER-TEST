@@ -135,12 +135,7 @@ async function CachedBlogSlugPage({
     }))
   }
 
-  return (
-    <DedicatedArticleView
-      sanityPost={post}
-      relatedArticles={related}
-    />
-  )
+  return <DedicatedArticleView sanityPost={post} relatedArticles={related} />
 }
 
 function BlogSlugFallback() {

@@ -46,9 +46,7 @@ describe('article presentation helpers', () => {
     const titleBlock = {
       _type: 'block',
       _key: 't1',
-      children: [
-        {_type: 'span', _key: 's0', text: '# 5 erreurs fréquentes en atelier', marks: []},
-      ],
+      children: [{_type: 'span', _key: 's0', text: '# 5 erreurs fréquentes en atelier', marks: []}],
     }
     const result = withoutRedundantLeadBlocks(
       [titleBlock, paragraph] as never,

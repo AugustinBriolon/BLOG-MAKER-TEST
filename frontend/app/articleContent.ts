@@ -110,10 +110,12 @@ export function withoutRedundantLeadBlocks(
   return blocks
 }
 
-export function formatAuthorName(author?: {
-  firstName?: string | null
-  lastName?: string | null
-} | null): string {
+export function formatAuthorName(
+  author?: {
+    firstName?: string | null
+    lastName?: string | null
+  } | null,
+): string {
   const firstName = author?.firstName?.trim()
   const lastName = author?.lastName?.trim()
   if (firstName && lastName) {
@@ -156,8 +158,6 @@ export function formatFrenchDate(value?: string | null): string | null {
 }
 
 export function estimateReadTimeMinutes(post: ArticleContentSource): number {
-  const words = portableTextPlainText(post)
-    .split(/\s+/)
-    .filter(Boolean).length
+  const words = portableTextPlainText(post).split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / 200))
 }

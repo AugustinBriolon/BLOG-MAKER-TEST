@@ -42,13 +42,7 @@ type ArticleBodyProps = ArticleContentSource & {
   ctaFinal?: CtaItem | null
 }
 
-function RichText({
-  value,
-  tone = 'body',
-}: {
-  value: PortableTextBlock[]
-  tone?: 'lead' | 'body'
-}) {
+function RichText({value, tone = 'body'}: {value: PortableTextBlock[]; tone?: 'lead' | 'body'}) {
   return (
     <div className={tone === 'lead' ? 'article-lead' : 'article-prose'}>
       <PortableText value={value} />
@@ -89,18 +83,14 @@ export default function ArticleBody(post: ArticleBodyProps) {
   }
 
   const title = post.title || ''
-  const body = isPortableTextArray(post.body)
-    ? withoutRedundantLeadBlocks(post.body, title)
-    : []
+  const body = isPortableTextArray(post.body) ? withoutRedundantLeadBlocks(post.body, title) : []
   const takeaways = (post.keyTakeaways || []).filter((item) => item.text)
   const faqs = (post.faq || []).filter((item) => item.question)
   const sources = (post.sources || []).filter((item) => item.label && item.url)
 
   return (
     <div className="space-y-14">
-      {isPortableTextArray(post.introduction) && (
-        <RichText tone="lead" value={post.introduction} />
-      )}
+      {isPortableTextArray(post.introduction) && <RichText tone="lead" value={post.introduction} />}
 
       {takeaways.length > 0 && (
         <section className="rounded-2xl border border-white/[0.08] bg-zinc-950 p-6 sm:p-8">
@@ -180,7 +170,9 @@ export default function ArticleBody(post: ArticleBodyProps) {
           <div className="space-y-2 flex-1">
             <h2 className="text-lg font-bold text-white">{post.ctaFinal.title}</h2>
             {post.ctaFinal.description && (
-              <p className="text-sm text-zinc-400 font-light leading-relaxed">{post.ctaFinal.description}</p>
+              <p className="text-sm text-zinc-400 font-light leading-relaxed">
+                {post.ctaFinal.description}
+              </p>
             )}
           </div>
           <a
