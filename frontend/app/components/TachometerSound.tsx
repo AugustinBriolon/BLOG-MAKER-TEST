@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState, useCallback} from 'react'
 import {motion} from 'framer-motion'
-import {Volume2, VolumeX, Gauge, Zap} from 'lucide-react'
+import {Volume2, VolumeX, Gauge, Zap, Lock, Unlock, Keyboard} from 'lucide-react'
 
 /**
  * Physically-modeled Yamaha CP3 890 cm³ inline-3 engine sound synthesis.
@@ -21,8 +21,11 @@ import {Volume2, VolumeX, Gauge, Zap} from 'lucide-react'
 export default function TachometerSound() {
   const [rpm, setRpm] = useState(1300)
   const [isRevving, setIsRevving] = useState(false)
+  const [isThrottleLocked, setIsThrottleLocked] = useState(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [engineMode, setEngineMode] = useState<'A' | 'STD' | 'B'>('A')
+
+  const activeRevving = isRevving || isThrottleLocked
 
   // Audio graph refs
   const audioCtxRef = useRef<AudioContext | null>(null)
@@ -273,7 +276,7 @@ export default function TachometerSound() {
   // Rev physics & real-time audio parameter update loop
   useEffect(() => {
     const maxRpmByMode = {A: 10900, STD: 9800, B: 8500}
-    targetRpmRef.current = isRevving ? maxRpmByMode[engineMode] : 1300
+    targetRpmRef.current = activeRevving ? maxRpmByMode[engineMode] : 1300
 
     let lastTime = performance.now()
     const loop = (time: number) => {
@@ -284,9 +287,16 @@ export default function TachometerSound() {
       const rateUp = engineMode === 'A' ? 16 : engineMode === 'STD' ? 12 : 9
       const rateDown = 5.5 // slower decel simulates flywheel inertia
       const speed = currentRpmRef.current < targetRpmRef.current ? rateUp : rateDown
+
+      let target = targetRpmRef.current
+      if (activeRevving && engineMode === 'A' && currentRpmRef.current >= 10600) {
+        // CP3 crossplane rev limiter (rupteur) ignition cut bounce
+        target = Math.sin(time * 0.045) > 0 ? 10900 : 10580
+      }
+
       const newRpm =
         currentRpmRef.current +
-        (targetRpmRef.current - currentRpmRef.current) * Math.min(dt * speed, 1)
+        (target - currentRpmRef.current) * Math.min(dt * speed, 1)
       currentRpmRef.current = newRpm
 
       // Update React state at 30fps to avoid excessive rerenders
@@ -356,7 +366,73 @@ export default function TachometerSound() {
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
     }
-  }, [isRevving, engineMode, firingFreq, makeDistortionCurve])
+  }, [activeRevving, engineMode, firingFreq, makeDistortionCurve])
+
+  // Start revving and resume audio
+  const startRevving = useCallback(() => {
+    if (!audioCtxRef.current) {
+      initAudio()
+      setAudioEnabled(true)
+    } else if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume()
+      setAudioEnabled(true)
+    }
+    setIsRevving(true)
+  }, [initAudio])
+
+  // Stop revving
+  const stopRevving = useCallback(() => {
+    setIsRevving(false)
+  }, [])
+
+  // Toggle persistent throttle lock
+  const toggleThrottleLock = useCallback(() => {
+    if (!audioCtxRef.current) {
+      initAudio()
+      setAudioEnabled(true)
+    } else if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume()
+      setAudioEnabled(true)
+    }
+    setIsThrottleLocked((prev) => !prev)
+  }, [initAudio])
+
+  // Window pointerup safeguard
+  useEffect(() => {
+    const handleGlobalPointerUp = () => {
+      setIsRevving(false)
+    }
+    window.addEventListener('pointerup', handleGlobalPointerUp)
+    return () => window.removeEventListener('pointerup', handleGlobalPointerUp)
+  }, [])
+
+  // Spacebar and ArrowUp keyboard throttle controls
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        const tag = (e.target as HTMLElement)?.tagName
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return
+        e.preventDefault()
+        if (!e.repeat) {
+          startRevving()
+        }
+      }
+    }
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        const tag = (e.target as HTMLElement)?.tagName
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return
+        e.preventDefault()
+        stopRevving()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [startRevving, stopRevving])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -403,11 +479,23 @@ export default function TachometerSound() {
               <button
                 key={m}
                 onClick={() => setEngineMode(m)}
-                className={`px-2.5 py-1 rounded transition-all font-semibold cursor-pointer ${
-                  engineMode === m ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'
+                className={`px-3 py-1 rounded transition-all font-semibold cursor-pointer flex items-center gap-1.5 ${
+                  engineMode === m
+                    ? m === 'A'
+                      ? 'bg-red-600 text-white font-bold shadow-md shadow-red-600/30'
+                      : 'bg-white text-black font-bold'
+                    : 'text-zinc-400 hover:text-white'
                 }`}
+                title={
+                  m === 'A'
+                    ? 'Mode A : Sport, réponse poignée maximale (10 900 tr/min)'
+                    : m === 'STD'
+                      ? 'Mode STD : Standard (9 800 tr/min)'
+                      : 'Mode B : Rain (8 500 tr/min)'
+                }
               >
-                MODE {m}
+                <span>MODE {m}</span>
+                {m === 'A' && <span className="text-[9px] opacity-90 font-extrabold tracking-wider">SPORT</span>}
               </button>
             ))}
           </div>
@@ -632,44 +720,86 @@ export default function TachometerSound() {
       {/* Throttle Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/[0.08]">
         <div className="space-y-1">
-          <p className="text-xs text-zinc-400 font-mono">
-            Maintenez le bouton pour simuler l&apos;ouverture de la poignée d&apos;accélérateur APSG
-            ride-by-wire.
+          <p className="text-xs text-zinc-300 font-mono flex items-center gap-2">
+            <span>Maintenez le bouton ou la touche</span>
+            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-white/20 text-[10px] text-amber-300 font-bold">
+              ESPACE
+            </kbd>
+            <span>/</span>
+            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-white/20 text-[10px] text-amber-300 font-bold">
+              ↑
+            </kbd>
           </p>
-          <p className="text-[10px] text-zinc-600 font-mono">
-            Modèle acoustique : fondamentale + 4 harmoniques + sous-harmonique + bruit
-            d&apos;admission + saturation d&apos;échappement + LFO de pulsation cylindre
+          <p className="text-[10px] text-zinc-500 font-mono">
+            {engineMode === 'A'
+              ? 'MODE A (SPORT) : Réponse APSG maximale • Rupteur CP3 à 10 900 tr/min'
+              : engineMode === 'STD'
+                ? 'MODE STD : Réponse linéaire équilibrée • Plafond 9 800 tr/min'
+                : 'MODE B : Réponse adoucie pour conditions humides • Plafond 8 500 tr/min'}
           </p>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
+          {/* Main Hold-to-Rev Button with robust pointer capture & touch-none */}
           <button
-            onMouseDown={() => {
-              if (!audioEnabled) initAudio()
-              setIsRevving(true)
+            onPointerDown={(e) => {
+              e.preventDefault()
+              try {
+                e.currentTarget.setPointerCapture(e.pointerId)
+              } catch {}
+              startRevving()
             }}
-            onMouseUp={() => setIsRevving(false)}
-            onMouseLeave={() => setIsRevving(false)}
-            onTouchStart={() => {
-              if (!audioEnabled) initAudio()
-              setIsRevving(true)
+            onPointerUp={(e) => {
+              try {
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                  e.currentTarget.releasePointerCapture(e.pointerId)
+                }
+              } catch {}
+              stopRevving()
             }}
-            onTouchEnd={() => setIsRevving(false)}
-            className={`cursor-pointer w-full sm:w-auto select-none rounded-lg px-8 py-3 font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all transform active:scale-95 ${
-              isRevving
+            onPointerCancel={(e) => {
+              try {
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                  e.currentTarget.releasePointerCapture(e.pointerId)
+                }
+              } catch {}
+              stopRevving()
+            }}
+            className={`cursor-pointer w-full sm:w-auto select-none touch-none rounded-xl px-7 py-3 font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all transform active:scale-95 shadow-lg ${
+              activeRevving
                 ? isRedline
-                  ? 'bg-red-600 text-white animate-pulse'
-                  : 'bg-red-500 text-white'
-                : 'bg-white text-black hover:bg-zinc-200'
+                  ? 'bg-red-600 text-white animate-pulse shadow-red-600/30 ring-2 ring-red-400'
+                  : 'bg-red-500 text-white shadow-red-500/25'
+                : 'bg-white text-black hover:bg-zinc-200 shadow-white/10'
             }`}
           >
-            <Zap className="h-3.5 w-3.5" />
+            <Zap className={`h-4 w-4 ${activeRevving ? 'text-amber-300' : 'text-amber-500'}`} />
             <span>
-              {isRevving
+              {activeRevving
                 ? isRedline
-                  ? 'RUPTEUR !'
+                  ? 'RUPTEUR CP3 (10 900 TR/MIN) !'
                   : 'POIGNÉE EN COIN !'
                 : 'MAINTENIR POUR ACCÉLÉRER'}
+            </span>
+          </button>
+
+          {/* Throttle Lock Button for hands-free continuous sound */}
+          <button
+            onClick={toggleThrottleLock}
+            className={`cursor-pointer px-4 py-3 rounded-xl font-mono text-xs font-semibold flex items-center justify-center gap-2 border transition-all ${
+              isThrottleLocked
+                ? 'bg-amber-400 text-black border-amber-400 font-bold shadow-lg shadow-amber-400/20'
+                : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border-white/10'
+            }`}
+            title="Verrouiller plein gaz pour écouter le son en continu sans maintenir la pression"
+          >
+            {isThrottleLocked ? (
+              <Lock className="h-3.5 w-3.5" />
+            ) : (
+              <Unlock className="h-3.5 w-3.5 opacity-60" />
+            )}
+            <span className="whitespace-nowrap">
+              {isThrottleLocked ? 'VERROUILLÉ 🔒' : 'VERROUILLER GAZ'}
             </span>
           </button>
         </div>
