@@ -3,10 +3,8 @@
 import {useState} from 'react'
 import Link from 'next/link'
 import {motion, AnimatePresence} from 'framer-motion'
-import {Clock, ExternalLink, ArrowRight} from 'lucide-react'
+import {Clock, ExternalLink, ArrowRight, BookOpen} from 'lucide-react'
 import {studioUrl} from '@/sanity/lib/api'
-
-import {CURATED_ARTICLES} from '@/app/data/curated-articles'
 
 type ArticleItem = {
   _id: string
@@ -26,7 +24,6 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
 
   const hasSanityPosts = sanityPosts && sanityPosts.length > 0
 
-  // Combine or select items
   const categories = [
     'TOUS',
     'ESSAIS & TESTS',
@@ -35,6 +32,7 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
     'MOTEUR & TECHNIQUE',
   ]
 
+  // Exclusive source: Sanity CMS
   const displayItems = hasSanityPosts
     ? sanityPosts.map((p) => ({
         _id: p._id,
@@ -44,11 +42,11 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
         readTime: '5 min de lecture',
         date: p.date ? new Date(p.date).toLocaleDateString('fr-FR') : 'Récemment',
         excerpt: p.excerpt || 'Découvrez l’analyse complète et détaillée dans cet article.',
-        tag: 'SANITY PUBLIÉ',
+        tag: 'SANITY CMS',
         highlight: 'DIRECT CMS',
         isSanity: true,
       }))
-    : CURATED_ARTICLES.map((a) => ({...a, isSanity: false}))
+    : []
 
   const filteredItems =
     activeFilter === 'TOUS'
@@ -105,57 +103,87 @@ export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps
           ))}
         </div>
 
-        {/* Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredItems.map((article, idx) => (
-              <motion.article
-                layout
-                key={article._id}
-                initial={{opacity: 0, y: 15}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, scale: 0.98}}
-                transition={{duration: 0.35, delay: idx * 0.04}}
-                className="group relative rounded-2xl border border-white/[0.08] bg-zinc-950 p-8 flex flex-col justify-between hover:border-white/25 transition-all duration-300"
+        {/* Articles Grid or Clean Empty State */}
+        {displayItems.length === 0 ? (
+          <div className="py-20 text-center space-y-5 rounded-2xl border border-dashed border-white/[0.12] bg-zinc-950 p-10 max-w-2xl mx-auto">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-white/10 bg-black text-amber-400 mx-auto">
+              <BookOpen className="h-5 w-5" />
+            </div>
+            <div className="space-y-2">
+              <span className="font-mono text-xs text-zinc-500 uppercase tracking-widest block">
+                [ 0 PUBLICATION DÉTECTÉE DANS SANITY ]
+              </span>
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                Aucun article publié pour le moment
+              </h3>
+              <p className="text-zinc-400 text-sm font-light leading-relaxed max-w-md mx-auto">
+                Sanity CMS est la source unique et exclusive du blog. Dès qu&apos;un article est
+                créé et publié dans votre studio, il apparaîtra automatiquement ici en temps réel.
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link
+                href={studioUrl}
+                className="inline-flex items-center gap-2 rounded-lg bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold px-5 py-3 tracking-wider uppercase transition-colors"
               >
-                <div>
-                  {/* Meta tags top */}
-                  <div className="flex items-center justify-between text-xs font-mono text-zinc-500 mb-5">
-                    <span className="border border-white/[0.08] bg-black px-2 py-0.5 rounded text-[11px] text-zinc-300">
-                      {article.tag}
-                    </span>
-                    <span className="flex items-center gap-1.5 text-zinc-500 text-[11px]">
-                      <Clock className="h-3 w-3" />
-                      {article.readTime}
-                    </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span>CRÉER UN ARTICLE DANS LE STUDIO</span>
+                <ExternalLink className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AnimatePresence mode="popLayout">
+              {filteredItems.map((article, idx) => (
+                <motion.article
+                  layout
+                  key={article._id}
+                  initial={{opacity: 0, y: 15}}
+                  animate={{opacity: 1, y: 0}}
+                  exit={{opacity: 0, scale: 0.98}}
+                  transition={{duration: 0.35, delay: idx * 0.04}}
+                  className="group relative rounded-2xl border border-white/[0.08] bg-zinc-950 p-8 flex flex-col justify-between hover:border-white/25 transition-all duration-300"
+                >
+                  <div>
+                    {/* Meta tags top */}
+                    <div className="flex items-center justify-between text-xs font-mono text-zinc-500 mb-5">
+                      <span className="border border-white/[0.08] bg-black px-2 py-0.5 rounded text-[11px] text-zinc-300">
+                        {article.tag}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-zinc-500 text-[11px]">
+                        <Clock className="h-3 w-3" />
+                        {article.readTime}
+                      </span>
+                    </div>
+
+                    {/* Title & Excerpt */}
+                    <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-zinc-300 transition-colors tracking-tight leading-snug mb-3">
+                      <Link href={`/blog/${article.slug}`}>{article.title}</Link>
+                    </h3>
+
+                    <p className="text-zinc-400 text-sm leading-relaxed font-light line-clamp-3 mb-6">
+                      {article.excerpt}
+                    </p>
                   </div>
 
-                  {/* Title & Excerpt */}
-                  <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-zinc-300 transition-colors tracking-tight leading-snug mb-3">
-                    <Link href={`/blog/${article.slug}`}>{article.title}</Link>
-                  </h3>
+                  {/* Footer of Card */}
+                  <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between font-mono text-xs">
+                    <span className="text-zinc-500 text-[11px]">{article.date}</span>
 
-                  <p className="text-zinc-400 text-sm leading-relaxed font-light line-clamp-3 mb-6">
-                    {article.excerpt}
-                  </p>
-                </div>
-
-                {/* Footer of Card */}
-                <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between font-mono text-xs">
-                  <span className="text-zinc-500 text-[11px]">{article.date}</span>
-
-                  <Link
-                    href={`/blog/${article.slug}`}
-                    className="inline-flex items-center gap-1.5 text-zinc-300 group-hover:text-white transition-colors text-[11px] font-semibold"
-                  >
-                    <span>LIRE LE DOSSIER</span>
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
-              </motion.article>
-            ))}
-          </AnimatePresence>
-        </div>
+                    <Link
+                      href={`/blog/${article.slug}`}
+                      className="inline-flex items-center gap-1.5 text-zinc-300 group-hover:text-white transition-colors text-[11px] font-semibold"
+                    >
+                      <span>LIRE LE DOSSIER</span>
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </motion.article>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* Dynamic CMS Status / Injection Box */}
         <div className="mt-16 rounded-2xl border border-dashed border-white/[0.15] bg-zinc-950 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">

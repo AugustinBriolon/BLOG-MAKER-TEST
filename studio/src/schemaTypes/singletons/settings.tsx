@@ -17,16 +17,18 @@ export const settings = defineType({
   fields: [
     defineField({
       name: 'title',
-      description: 'This field is the title of your blog.',
-      title: 'Title',
+      title: 'Titre principal du site (Balise Title globale)',
+      description:
+        'Titre SEO global utilisé dans l’onglet du navigateur, les résultats Google et les partages (50–65 caractères).',
       type: 'string',
       initialValue: demo.title,
-      validation: (rule) => rule.required(),
+      validation: (rule) => rule.required().max(75),
     }),
     defineField({
       name: 'description',
-      description: 'Used on the Homepage',
-      title: 'Description',
+      title: 'Meta Description globale',
+      description:
+        'Résumé attractif du site pour les moteurs de recherche (Google snippet, 140–160 caractères).',
       type: 'array',
       initialValue: demo.description,
       of: [

@@ -21,4 +21,4 @@ export const description = [
   },
 ]
 
-export const ogImageTitle = 'A Next.js Blog with a Native Authoring Experience'
+export const ogImageTitle = 'Yamaha XSR 900 — Guides, Essais et Accessoires'

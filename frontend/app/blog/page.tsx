@@ -3,7 +3,6 @@ import {draftMode} from 'next/headers'
 import {Suspense} from 'react'
 
 import BlogHubClient, {type BlogItem} from '@/app/components/BlogHubClient'
-import {CURATED_ARTICLES} from '@/app/data/curated-articles'
 import {
   getDynamicFetchOptions,
   sanityFetch,
@@ -81,24 +80,6 @@ async function CachedBlogPage({perspective, stega}: DynamicFetchOptions) {
         p.author?.firstName && p.author?.lastName
           ? `${p.author.firstName} ${p.author.lastName}`
           : undefined,
-    }))
-  } else {
-    articles = CURATED_ARTICLES.map((a) => ({
-      _id: a._id,
-      title: a.title,
-      slug: a.slug,
-      category: a.category,
-      readTime: a.readTime,
-      date: new Date(a.date).toLocaleDateString('fr-FR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      }),
-      excerpt: a.excerpt,
-      tag: a.tag,
-      highlight: a.highlight,
-      isSanity: false,
-      authorName: a.author.name,
     }))
   }
 
