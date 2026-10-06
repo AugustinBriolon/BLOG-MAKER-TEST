@@ -5,6 +5,7 @@ import MotorcycleViewer3D from '@/app/components/MotorcycleViewer3D'
 import BentoSpecs from '@/app/components/BentoSpecs'
 import TachometerSound from '@/app/components/TachometerSound'
 import ArticlesSection from '@/app/components/ArticlesSection'
+import {buildHomeJsonLd} from '@/app/structuredData'
 import {getDynamicFetchOptions, sanityFetch, type DynamicFetchOptions} from '@/sanity/lib/live'
 import {allPostsQuery} from '@/sanity/lib/queries'
 
@@ -36,28 +37,7 @@ async function CachedPage({perspective, stega}: DynamicFetchOptions) {
     stega,
   })
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebSite',
-        'name': 'Yamaha XSR 900 Hub',
-        'description': 'Guide technique, essais et archives du roadster Yamaha XSR 900 CP3.',
-        'inLanguage': 'fr-FR',
-      },
-      {
-        '@type': 'Product',
-        'name': 'Yamaha XSR 900',
-        'brand': {
-          '@type': 'Brand',
-          'name': 'Yamaha',
-        },
-        'category': 'Motorcycle',
-        'description':
-          'Roadster néo-rétro propulsé par le 3-cylindres Crossplane CP3 de 890 cm³ et cadre Deltabox.',
-      },
-    ],
-  }
+  const jsonLd = buildHomeJsonLd()
 
   return (
     <div className="relative overflow-hidden bg-black text-zinc-100">
