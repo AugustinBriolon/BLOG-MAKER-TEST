@@ -21,12 +21,19 @@ export const blogPost = defineType({
   ],
   fields: [
     defineField({
+      name: 'title',
+      title: 'Titre de l’article',
+      type: 'string',
+      group: 'seo',
+      description: 'Titre principal de l’article (utilisé par Blog Maker et Studio).',
+    }),
+    defineField({
       name: 'metaTitle',
       title: 'Balise Title',
       type: 'string',
       group: 'seo',
       description: "55–65 caractères. À rédiger en premier pour fixer l'angle.",
-      validation: (Rule) => Rule.required().max(70),
+      validation: (Rule) => Rule.max(70),
     }),
     defineField({
       name: 'metaDescription',
@@ -180,8 +187,16 @@ export const blogPost = defineType({
     }),
 
     defineField({
+      name: 'body',
+      title: 'Contenu principal (Blog Maker / Standard)',
+      type: 'blockContentSeo',
+      group: 'content',
+      description: 'Corps principal rédigé par Blog Maker ou l’éditeur standard.',
+    }),
+
+    defineField({
       name: 'content',
-      title: 'Sections',
+      title: 'Sections modulaires',
       type: 'array',
       group: 'content',
       description: 'Texte (rich) ou HTML tableaux. JSON-LD → groupe 2 uniquement.',
@@ -270,12 +285,13 @@ export const blogPost = defineType({
 
   preview: {
     select: {
-      title: 'metaTitle',
+      title: 'title',
+      metaTitle: 'metaTitle',
       slug: 'slug.current',
       media: 'featuredImage',
     },
-    prepare: ({title, slug, media}: Record<string, unknown>) => ({
-      title: (title as string) ?? 'Article de blog',
+    prepare: ({title, metaTitle, slug, media}: Record<string, unknown>) => ({
+      title: ((title || metaTitle) as string) ?? 'Article de blog',
       subtitle: slug ? `/blog/${slug}` : undefined,
       media: media as any,
     }),

@@ -185,9 +185,12 @@ export default function DedicatedArticleView({
         )}
 
         {/* Article Body Content */}
-        {sanityPost?.content?.length ? (
+        {sanityPost?.body?.length || sanityPost?.content?.length ? (
           <div className="prose prose-invert prose-zinc prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white prose-a:text-white hover:prose-a:underline prose-p:text-zinc-300 prose-p:font-light prose-p:leading-relaxed">
-            <PortableText className="space-y-6" value={sanityPost.content as PortableTextBlock[]} />
+            <PortableText
+              className="space-y-6"
+              value={(sanityPost.body || sanityPost.content) as PortableTextBlock[]}
+            />
           </div>
         ) : (
           <div className="p-8 rounded-xl border border-white/[0.08] bg-zinc-950 font-mono text-xs text-zinc-400 text-center">
