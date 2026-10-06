@@ -6,31 +6,40 @@ type Props = {
     firstName: string | null
     lastName: string | null
     picture?: {
-      asset?: {_ref: string}
-      hotspot?: {x: number; y: number}
-      crop?: {top: number; bottom: number; left: number; right: number}
-      alt?: string
-    }
+      asset?: Record<string, unknown> | null
+      hotspot?: {x: number; y: number} | null
+      crop?: {top: number; bottom: number; left: number; right: number} | null
+      alt?: string | null
+    } | null
   }
   date?: string
   small?: boolean
 }
 
 export default function Avatar({person, date, small = false}: Props) {
-  const {firstName, lastName, picture} = person
+  const {firstName, lastName, picture} = person || {}
+
+  const assetRef =
+    typeof picture?.asset?._ref === 'string'
+      ? picture.asset._ref
+      : typeof picture?.asset?._id === 'string'
+        ? picture.asset._id
+        : undefined
+
+  const displayName = [firstName, lastName].filter(Boolean).join(' ')
 
   return (
     <div className="flex items-center font-mono">
-      {picture?.asset?._ref ? (
+      {assetRef ? (
         <div className={`${small ? 'h-6 w-6 mr-2' : 'h-9 w-9 mr-4'}`}>
           <Image
-            id={picture.asset._ref}
+            id={assetRef}
             alt={picture?.alt || ''}
             className="h-full rounded-full"
             height={small ? 32 : 48}
             width={small ? 32 : 48}
-            hotspot={picture.hotspot}
-            crop={picture.crop}
+            hotspot={picture?.hotspot || undefined}
+            crop={picture?.crop || undefined}
             mode="cover"
           />
         </div>
@@ -38,11 +47,7 @@ export default function Avatar({person, date, small = false}: Props) {
         <div className="mr-1">By </div>
       )}
       <div className="flex flex-col">
-        {firstName && lastName && (
-          <div className={`${small ? 'text-sm' : ''}`}>
-            {firstName} {lastName}
-          </div>
-        )}
+        {displayName && <div className={`${small ? 'text-sm' : ''}`}>{displayName}</div>}
         <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>
           <DateComponent dateString={date} />
         </div>

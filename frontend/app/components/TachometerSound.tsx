@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState, useCallback} from 'react'
 import {motion} from 'framer-motion'
-import {Volume2, VolumeX, Gauge, Zap, Lock, Unlock, Keyboard} from 'lucide-react'
+import {Volume2, VolumeX, Gauge, Zap, Lock, Unlock} from 'lucide-react'
 
 /**
  * Physically-modeled Yamaha CP3 890 cm³ inline-3 engine sound synthesis.
@@ -295,8 +295,7 @@ export default function TachometerSound() {
       }
 
       const newRpm =
-        currentRpmRef.current +
-        (target - currentRpmRef.current) * Math.min(dt * speed, 1)
+        currentRpmRef.current + (target - currentRpmRef.current) * Math.min(dt * speed, 1)
       currentRpmRef.current = newRpm
 
       // Update React state at 30fps to avoid excessive rerenders
@@ -495,7 +494,9 @@ export default function TachometerSound() {
                 }
               >
                 <span>MODE {m}</span>
-                {m === 'A' && <span className="text-[9px] opacity-90 font-extrabold tracking-wider">SPORT</span>}
+                {m === 'A' && (
+                  <span className="text-[9px] opacity-90 font-extrabold tracking-wider">SPORT</span>
+                )}
               </button>
             ))}
           </div>

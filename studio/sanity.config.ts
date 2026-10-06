@@ -79,7 +79,11 @@ export default defineConfig({
           },
           {
             route: '/posts/:slug',
-            filter: `_type == "post" && slug.current == $slug || _id == $slug`,
+            filter: `_type in ["post", "blogPost"] && slug.current == $slug || _id == $slug`,
+          },
+          {
+            route: '/blog/:slug',
+            filter: `_type in ["post", "blogPost"] && slug.current == $slug || _id == $slug`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/visual-editing/presentation-resolver-api#8d8bca7bfcd7
@@ -113,6 +117,24 @@ export default defineConfig({
                 {
                   title: doc?.title || 'Untitled',
                   href: resolveHref('post', doc?.slug)!,
+                },
+                {
+                  title: 'Home',
+                  href: '/',
+                } satisfies DocumentLocation,
+              ].filter(Boolean) as DocumentLocation[],
+            }),
+          }),
+          blogPost: defineLocations({
+            select: {
+              title: 'metaTitle',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/blog/${doc?.slug || ''}`,
                 },
                 {
                   title: 'Home',

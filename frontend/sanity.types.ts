@@ -127,6 +127,176 @@ export type Button = {
   link?: Link
 }
 
+export type BlogPostCta = {
+  _type: 'blogPostCta'
+  title: string
+  description?: string
+  buttonText: string
+  buttonUrl: string
+}
+
+export type HtmlEmbed = {
+  _type: 'htmlEmbed'
+  html: string
+}
+
+export type TextBlock = {
+  _type: 'textBlock'
+  body: BlockContentSeo
+}
+
+export type BlockContentSeo = Array<{
+  children?: Array<{
+    marks?: Array<string>
+    text?: string
+    _type: 'span'
+    _key: string
+  }>
+  style?: 'normal' | 'h2' | 'h3' | 'h4' | 'blockquote'
+  listItem?: 'bullet' | 'number'
+  markDefs?: Array<{
+    href?: string
+    follow?: boolean
+    _type: 'link'
+    _key: string
+  }>
+  level?: number
+  _type: 'block'
+  _key: string
+}>
+
+export type CategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'category'
+}
+
+export type AuthorReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'author'
+}
+
+export type BlogPostReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'blogPost'
+}
+
+export type BlogPost = {
+  _id: string
+  _type: 'blogPost'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  metaTitle: string
+  metaDescription: string
+  slug: Slug
+  keywordPrimary: string
+  keywordsSecondary?: string
+  category: CategoryReference
+  tags?: Array<string>
+  featuredImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  featuredImageAlt: string
+  schemaPrincipalType?: 'Article' | 'BlogPosting'
+  structuredDataJsonLd?: string
+  h1: string
+  author: AuthorReference
+  publishedAt: string
+  updatedAt?: string
+  introduction: BlockContentSeo
+  keyTakeaways?: Array<{
+    text: string
+    _key: string
+  }>
+  content?: Array<
+    | ({
+        _key: string
+      } & TextBlock)
+    | ({
+        _key: string
+      } & HtmlEmbed)
+  >
+  faq?: Array<{
+    question: string
+    answer: BlockContentSeo
+    _key: string
+  }>
+  conclusion?: BlockContentSeo
+  ctaFinal?: BlogPostCta
+  sources?: Array<{
+    label: string
+    url: string
+    _key: string
+  }>
+  relatedPosts?: Array<
+    {
+      _key: string
+    } & BlogPostReference
+  >
+}
+
+export type Author = {
+  _id: string
+  _type: 'author'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  slug: Slug
+  role?: string
+  photo?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  bio?: string
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
+}
+
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
+export type Category = {
+  _id: string
+  _type: 'category'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  slug: Slug
+  description?: string
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -165,22 +335,6 @@ export type Settings = {
     metadataBase?: string
     _type: 'image'
   }
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
 }
 
 export type Page = {
@@ -248,12 +402,6 @@ export type Person = {
     alt?: string
     _type: 'image'
   }
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
 }
 
 export type SanityAssistInstructionTask = {
@@ -500,14 +648,24 @@ export type AllSanitySchemaTypes =
   | BlockContentTextOnly
   | BlockContent
   | Button
-  | Settings
+  | BlogPostCta
+  | HtmlEmbed
+  | TextBlock
+  | BlockContentSeo
+  | CategoryReference
+  | AuthorReference
+  | BlogPostReference
+  | BlogPost
+  | Author
   | SanityImageCrop
   | SanityImageHotspot
+  | Slug
+  | Category
+  | Settings
   | Page
   | PersonReference
   | Post
   | Person
-  | Slug
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations
@@ -656,8 +814,13 @@ export type GetPageQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: sitemapData
-// Query: *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,  }
+// Query: *[_type in ["page", "post", "blogPost"] && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,  }
 export type SitemapDataResult = Array<
+  | {
+      slug: string
+      _type: 'blogPost'
+      _updatedAt: string
+    }
   | {
       slug: string
       _type: 'page'
@@ -672,136 +835,393 @@ export type SitemapDataResult = Array<
 
 // Source: sanity/lib/queries.ts
 // Variable: allPostsQuery
-// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type AllPostsQueryResult = Array<{
-  _id: string
-  status: 'draft' | 'published'
-  title: string
-  slug: string
-  excerpt: string | null
-  coverImage: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  } | null
-  date: string
-  author: {
-    firstName: string
-    lastName: string
-    picture: {
-      asset?: SanityImageAssetReference
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: 'image'
-    }
-  } | null
-}>
-
-// Source: sanity/lib/queries.ts
-// Variable: morePostsQuery
-// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type MorePostsQueryResult = Array<{
-  _id: string
-  status: 'draft' | 'published'
-  title: string
-  slug: string
-  excerpt: string | null
-  coverImage: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  } | null
-  date: string
-  author: {
-    firstName: string
-    lastName: string
-    picture: {
-      asset?: SanityImageAssetReference
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: 'image'
-    }
-  } | null
-}>
-
-// Source: sanity/lib/queries.ts
-// Variable: postQuery
-// Query: *[_type == "post" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }    }  },      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type PostQueryResult = {
-  content: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-        listItem?: 'bullet' | 'number'
-        markDefs: Array<{
-          linkType?: 'href' | 'page' | 'post'
-          href?: string
-          page: string | null
-          post: string | null
-          openInNewTab?: boolean
-          _type: 'link'
-          _key: string
-        }> | null
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | {
+// Query: *[_type in ["post", "blogPost"] && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
+export type AllPostsQueryResult = Array<
+  | {
+      _id: string
+      _type: 'blogPost'
+      status: 'draft' | 'published'
+      title: string
+      slug: string
+      excerpt: string
+      coverImage: {
         asset?: SanityImageAssetReference
         media?: unknown
         hotspot?: SanityImageHotspot
         crop?: SanityImageCrop
         _type: 'image'
-        _key: string
-        markDefs: null
       }
-  > | null
-  _id: string
-  status: 'draft' | 'published'
-  title: string
-  slug: string
-  excerpt: string | null
-  coverImage: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  } | null
-  date: string
-  author: {
-    firstName: string
-    lastName: string
-    picture: {
-      asset?: SanityImageAssetReference
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: 'image'
+      date: string
+      author: {
+        firstName: string
+        lastName: ''
+        picture: {
+          asset?: SanityImageAssetReference
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+        } | null
+        role: string | null
+        bio: string | null
+      }
+      category: {
+        title: string
+        slug: string
+      }
+      tags: Array<string> | null
+      keywordPrimary: string
+      keywordsSecondary: string | null
+      keyTakeaways: Array<{
+        text: string
+        _key: string
+      }> | null
+      h1: string
+      introduction: BlockContentSeo
+      faq: Array<{
+        question: string
+        answer: BlockContentSeo
+        _key: string
+      }> | null
+      conclusion: BlockContentSeo | null
+      ctaFinal: BlogPostCta | null
+      sources: Array<{
+        label: string
+        url: string
+        _key: string
+      }> | null
+      structuredDataJsonLd: string | null
+      schemaPrincipalType: 'Article' | 'BlogPosting' | null
     }
-  } | null
-} | null
+  | {
+      _id: string
+      _type: 'post'
+      status: 'draft' | 'published'
+      title: string
+      slug: string
+      excerpt: string | ''
+      coverImage: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        _type: 'image'
+      } | null
+      date: string
+      author:
+        | {
+            firstName: null
+            lastName: ''
+            picture: null
+            role: null
+            bio: null
+          }
+        | {
+            firstName: string
+            lastName: string
+            picture: {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              alt?: string
+              _type: 'image'
+            }
+          }
+        | null
+      category: null
+      tags: null
+      keywordPrimary: null
+      keywordsSecondary: null
+      keyTakeaways: null
+      h1: null
+      introduction: null
+      faq: null
+      conclusion: null
+      ctaFinal: null
+      sources: null
+      structuredDataJsonLd: null
+      schemaPrincipalType: null
+    }
+>
+
+// Source: sanity/lib/queries.ts
+// Variable: morePostsQuery
+// Query: *[_type in ["post", "blogPost"] && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) [0...$limit] {      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
+export type MorePostsQueryResult = Array<
+  | {
+      _id: string
+      _type: 'blogPost'
+      status: 'draft' | 'published'
+      title: string
+      slug: string
+      excerpt: string
+      coverImage: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      date: string
+      author: {
+        firstName: string
+        lastName: ''
+        picture: {
+          asset?: SanityImageAssetReference
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+        } | null
+        role: string | null
+        bio: string | null
+      }
+      category: {
+        title: string
+        slug: string
+      }
+      tags: Array<string> | null
+      keywordPrimary: string
+      keywordsSecondary: string | null
+      keyTakeaways: Array<{
+        text: string
+        _key: string
+      }> | null
+      h1: string
+      introduction: BlockContentSeo
+      faq: Array<{
+        question: string
+        answer: BlockContentSeo
+        _key: string
+      }> | null
+      conclusion: BlockContentSeo | null
+      ctaFinal: BlogPostCta | null
+      sources: Array<{
+        label: string
+        url: string
+        _key: string
+      }> | null
+      structuredDataJsonLd: string | null
+      schemaPrincipalType: 'Article' | 'BlogPosting' | null
+    }
+  | {
+      _id: string
+      _type: 'post'
+      status: 'draft' | 'published'
+      title: string
+      slug: string
+      excerpt: string | ''
+      coverImage: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        _type: 'image'
+      } | null
+      date: string
+      author:
+        | {
+            firstName: null
+            lastName: ''
+            picture: null
+            role: null
+            bio: null
+          }
+        | {
+            firstName: string
+            lastName: string
+            picture: {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              alt?: string
+              _type: 'image'
+            }
+          }
+        | null
+      category: null
+      tags: null
+      keywordPrimary: null
+      keywordsSecondary: null
+      keyTakeaways: null
+      h1: null
+      introduction: null
+      faq: null
+      conclusion: null
+      ctaFinal: null
+      sources: null
+      structuredDataJsonLd: null
+      schemaPrincipalType: null
+    }
+>
+
+// Source: sanity/lib/queries.ts
+// Variable: postQuery
+// Query: *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {    content[]{      ...,      markDefs[]{        ...,          _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }      }    },      _id,  _type,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(metaTitle, title, h1, "Untitled"),  "slug": slug.current,  "excerpt": coalesce(metaDescription, excerpt, ""),  "coverImage": coalesce(featuredImage, coverImage),  "date": coalesce(publishedAt, date, _updatedAt),  "author": coalesce(    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },    author->{ firstName, lastName, picture }  ),  category->{ title, "slug": slug.current },  tags,  keywordPrimary,  keywordsSecondary,  keyTakeaways,  h1,  introduction,  faq,  conclusion,  ctaFinal,  sources,  structuredDataJsonLd,  schemaPrincipalType  }
+export type PostQueryResult =
+  | {
+      content: Array<
+        | {
+            _key: string
+            _type: 'htmlEmbed'
+            html: string
+            markDefs: null
+          }
+        | {
+            _key: string
+            _type: 'textBlock'
+            body: BlockContentSeo
+            markDefs: null
+          }
+      > | null
+      _id: string
+      _type: 'blogPost'
+      status: 'draft' | 'published'
+      title: string
+      slug: string
+      excerpt: string
+      coverImage: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      date: string
+      author: {
+        firstName: string
+        lastName: ''
+        picture: {
+          asset?: SanityImageAssetReference
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+        } | null
+        role: string | null
+        bio: string | null
+      }
+      category: {
+        title: string
+        slug: string
+      }
+      tags: Array<string> | null
+      keywordPrimary: string
+      keywordsSecondary: string | null
+      keyTakeaways: Array<{
+        text: string
+        _key: string
+      }> | null
+      h1: string
+      introduction: BlockContentSeo
+      faq: Array<{
+        question: string
+        answer: BlockContentSeo
+        _key: string
+      }> | null
+      conclusion: BlockContentSeo | null
+      ctaFinal: BlogPostCta | null
+      sources: Array<{
+        label: string
+        url: string
+        _key: string
+      }> | null
+      structuredDataJsonLd: string | null
+      schemaPrincipalType: 'Article' | 'BlogPosting' | null
+    }
+  | {
+      content: Array<
+        | {
+            children?: Array<{
+              marks?: Array<string>
+              text?: string
+              _type: 'span'
+              _key: string
+            }>
+            style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+            listItem?: 'bullet' | 'number'
+            markDefs: Array<{
+              linkType?: 'href' | 'page' | 'post'
+              href?: string
+              page: string | null
+              post: string | null
+              openInNewTab?: boolean
+              _type: 'link'
+              _key: string
+            }> | null
+            level?: number
+            _type: 'block'
+            _key: string
+          }
+        | {
+            asset?: SanityImageAssetReference
+            media?: unknown
+            hotspot?: SanityImageHotspot
+            crop?: SanityImageCrop
+            _type: 'image'
+            _key: string
+            markDefs: null
+          }
+      > | null
+      _id: string
+      _type: 'post'
+      status: 'draft' | 'published'
+      title: string
+      slug: string
+      excerpt: string | ''
+      coverImage: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        _type: 'image'
+      } | null
+      date: string
+      author:
+        | {
+            firstName: null
+            lastName: ''
+            picture: null
+            role: null
+            bio: null
+          }
+        | {
+            firstName: string
+            lastName: string
+            picture: {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              alt?: string
+              _type: 'image'
+            }
+          }
+        | null
+      category: null
+      tags: null
+      keywordPrimary: null
+      keywordsSecondary: null
+      keyTakeaways: null
+      h1: null
+      introduction: null
+      faq: null
+      conclusion: null
+      ctaFinal: null
+      sources: null
+      structuredDataJsonLd: null
+      schemaPrincipalType: null
+    }
+  | null
 
 // Source: sanity/lib/queries.ts
 // Variable: postPagesSlugs
-// Query: *[_type == "post" && defined(slug.current)]  {"slug": slug.current}
+// Query: *[_type in ["post", "blogPost"] && defined(slug.current)]  {"slug": slug.current}
 export type PostPagesSlugsResult = Array<{
   slug: string
 }>
@@ -819,11 +1239,11 @@ declare module '@sanity/client' {
   interface SanityQueries {
     '*[_type == "settings"][0]': SettingsQueryResult
     '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
-    '\n  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
-    '\n  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': AllPostsQueryResult
-    '\n  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': MorePostsQueryResult
-    '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
-    '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
+    '\n  *[_type in ["page", "post", "blogPost"] && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
+    '\n  *[_type in ["post", "blogPost"] && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': AllPostsQueryResult
+    '\n  *[_type in ["post", "blogPost"] && _id != $skip && defined(slug.current)] | order(coalesce(publishedAt, date, _updatedAt) desc) [0...$limit] {\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': MorePostsQueryResult
+    '\n  *[_type in ["post", "blogPost"] && slug.current == $slug] [0] {\n    content[]{\n      ...,\n      markDefs[]{\n        ...,\n        \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n    },\n    \n  _id,\n  _type,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(metaTitle, title, h1, "Untitled"),\n  "slug": slug.current,\n  "excerpt": coalesce(metaDescription, excerpt, ""),\n  "coverImage": coalesce(featuredImage, coverImage),\n  "date": coalesce(publishedAt, date, _updatedAt),\n  "author": coalesce(\n    author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },\n    author->{ firstName, lastName, picture }\n  ),\n  category->{ title, "slug": slug.current },\n  tags,\n  keywordPrimary,\n  keywordsSecondary,\n  keyTakeaways,\n  h1,\n  introduction,\n  faq,\n  conclusion,\n  ctaFinal,\n  sources,\n  structuredDataJsonLd,\n  schemaPrincipalType\n\n  }\n': PostQueryResult
+    '\n  *[_type in ["post", "blogPost"] && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
   }
 }
