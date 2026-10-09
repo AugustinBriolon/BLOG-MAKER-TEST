@@ -8,6 +8,33 @@ interface WebhookPayload {
   slug?: {current?: string} | string
 }
 
+async function pingIndexNow(paths: string[]) {
+  if (process.env.NODE_ENV === 'test') return
+
+  const key = process.env.INDEXNOW_KEY || '7492c90e0b3543d8a9e14a70e7e1f98a'
+  const rawHost =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, '') ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    'yamaha-xsr900.vercel.app'
+  const host = rawHost.replace(/\/.*$/, '')
+
+  try {
+    await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+      body: JSON.stringify({
+        host,
+        key,
+        keyLocation: `https://${host}/${key}.txt`,
+        urlList: paths.map((p) => (p.startsWith('http') ? p : `https://${host}${p}`)),
+      }),
+    })
+  } catch (err) {
+    // Non-blocking telemetry
+    console.error('IndexNow ping notice:', err)
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const secret = process.env.SANITY_REVALIDATE_SECRET
@@ -62,6 +89,8 @@ export async function POST(req: NextRequest) {
       revalidatedPaths.push(`/blog/${slug}`, `/posts/${slug}`)
     }
 
+    void pingIndexNow(revalidatedPaths)
+
     return NextResponse.json({
       revalidated: true,
       now: Date.now(),
@@ -96,6 +125,8 @@ export async function GET(req: NextRequest) {
     revalidatePath(`/posts/${slug}`)
     paths.push(`/blog/${slug}`, `/posts/${slug}`)
   }
+
+  void pingIndexNow(paths)
 
   return NextResponse.json({
     revalidated: true,

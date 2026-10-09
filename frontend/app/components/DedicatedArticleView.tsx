@@ -4,6 +4,8 @@ import ArticleBody from '@/app/components/ArticleBody'
 import ArticleShareButton from '@/app/components/ArticleShareButton'
 import Image from '@/app/components/SanityImage'
 import {estimateReadTimeMinutes, formatAuthorName, formatFrenchDate} from '@/app/articleContent'
+import {buildArticleJsonLd} from '@/app/structuredData'
+import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 
 interface DedicatedArticleViewProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,9 +40,27 @@ export default function DedicatedArticleView({
     (typeof sanityPost?.author?.bio === 'string' && sanityPost.author.bio.trim()) ||
     "Spécialiste de l'architecture moteur CP3 et de l'histoire de la gamme Sport Heritage Yamaha."
   const coverRef = sanityPost?.coverImage?.asset?._ref
+  const authorPhotoRef = sanityPost?.author?.picture?.asset?._ref
+
+  const ogImage = resolveOpenGraphImage(sanityPost?.coverImage)
+  const jsonLd = buildArticleJsonLd({
+    title,
+    description: excerpt,
+    slug: sanityPost?.slug || '',
+    date: sanityPost?.date,
+    updatedAt: sanityPost?._updatedAt,
+    imageUrl: ogImage?.url,
+    authorName,
+    authorRole,
+    authorBio,
+  })
 
   return (
     <article className="min-h-screen bg-black text-zinc-100 pt-8 pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+      />
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl mb-10">
         <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-zinc-500 border-b border-white/[0.08] pb-4">
           <div className="flex items-center gap-2 min-w-0">
@@ -81,8 +101,18 @@ export default function DedicatedArticleView({
 
           <div className="pt-4 flex flex-wrap items-center justify-between gap-6 border-t border-white/[0.06] text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center">
-                <User className="h-4 w-4 text-zinc-400" />
+              <div className="h-10 w-10 rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center overflow-hidden">
+                {authorPhotoRef ? (
+                  <Image
+                    id={authorPhotoRef}
+                    alt={authorName}
+                    width={40}
+                    height={40}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="h-4 w-4 text-zinc-400" />
+                )}
               </div>
               <div>
                 <div className="font-bold text-white tracking-wider">{authorName}</div>
@@ -133,8 +163,18 @@ export default function DedicatedArticleView({
         />
 
         <div className="mt-16 p-8 rounded-2xl border border-white/[0.08] bg-zinc-950 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="h-16 w-16 rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center shrink-0">
-            <User className="h-6 w-6 text-zinc-400" />
+          <div className="h-16 w-16 rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center shrink-0 overflow-hidden">
+            {authorPhotoRef ? (
+              <Image
+                id={authorPhotoRef}
+                alt={authorName}
+                width={64}
+                height={64}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <User className="h-6 w-6 text-zinc-400" />
+            )}
           </div>
           <div className="space-y-2 text-center sm:text-left">
             <div className="font-mono text-xs text-zinc-500 uppercase tracking-widest">

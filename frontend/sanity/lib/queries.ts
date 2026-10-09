@@ -16,7 +16,7 @@ const postFields = /* groq */ `
   "date": coalesce(publishedAt, date, _updatedAt),
   "author": coalesce(
     author->{ "firstName": name, "lastName": "", "picture": photo, role, bio },
-    author->{ firstName, lastName, picture }
+    author->{ firstName, lastName, picture, role, bio }
   ),
   category->{ title, "slug": slug.current },
   tags,

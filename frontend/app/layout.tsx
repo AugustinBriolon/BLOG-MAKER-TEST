@@ -53,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: plainDescription,
     alternates: {
-      canonical: './',
+      canonical: '/',
     },
     openGraph: {
       title,

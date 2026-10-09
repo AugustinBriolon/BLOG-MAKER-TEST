@@ -4,6 +4,7 @@ import {Suspense} from 'react'
 
 import BlogHubClient, {type BlogItem} from '@/app/components/BlogHubClient'
 import {BLOG_MAGAZINE_CATEGORIES, resolveBlogMagazineCategory} from '@/app/blogCategory'
+import {buildBlogHubJsonLd} from '@/app/structuredData'
 import {
   getDynamicFetchOptions,
   sanityFetch,
@@ -24,6 +25,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description: settings?.description
       ? 'Dossiers complets, guides d’entretien moteur CP3 et essais de la Yamaha XSR 900.'
       : 'Actualités, essais détaillés et chroniques mécaniques de la Yamaha XSR 900.',
+    alternates: {
+      canonical: '/blog',
+    },
   }
 }
 
@@ -92,7 +96,17 @@ async function CachedBlogPage({perspective, stega}: DynamicFetchOptions) {
     })
   }
 
-  return <BlogHubClient articles={articles} categories={[...BLOG_MAGAZINE_CATEGORIES]} />
+  const jsonLd = buildBlogHubJsonLd()
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+      />
+      <BlogHubClient articles={articles} categories={[...BLOG_MAGAZINE_CATEGORIES]} />
+    </>
+  )
 }
 
 function BlogFallback() {
