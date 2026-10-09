@@ -1,9 +1,10 @@
 'use client'
 
 import {useEffect, useState} from 'react'
-import {motion} from 'framer-motion'
+import {motion, useReducedMotion} from 'framer-motion'
 
 export default function CustomCursor() {
+  const reduceMotion = useReducedMotion()
   const [mousePosition, setMousePosition] = useState({x: -100, y: -100})
   const [isHovered, setIsHovered] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
@@ -11,6 +12,8 @@ export default function CustomCursor() {
   useEffect(() => {
     // Only enable on fine pointer devices (desktop)
     if (window.matchMedia('(pointer: coarse)').matches) return
+    // No custom cursor when the user prefers reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({x: e.clientX, y: e.clientY})
@@ -40,7 +43,7 @@ export default function CustomCursor() {
     }
   }, [isVisible])
 
-  if (!isVisible) return null
+  if (reduceMotion || !isVisible) return null
 
   return (
     <>

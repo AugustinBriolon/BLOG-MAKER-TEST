@@ -74,8 +74,8 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
             <span>ARCHIVES TECHNIQUES // FASTER SONS</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight leading-none">
-            LE BLOG XSR 900
+          <h1 className="type-display text-4xl sm:text-6xl lg:text-7xl font-semibold text-white tracking-tight">
+            Le blog XSR 900
           </h1>
 
           <p className="text-lg sm:text-xl text-zinc-400 font-light leading-relaxed max-w-2xl">
@@ -88,7 +88,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
       {/* Featured Article Card */}
       {featuredArticle && !searchQuery && selectedCategory === 'TOUS' && (
         <div className="container mx-auto px-4 sm:px-6 mb-20">
-          <div className="rounded-3xl border border-white/[0.12] bg-gradient-to-b from-zinc-900 via-zinc-950 to-black p-8 sm:p-12 relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+          <div className="rounded-xl border border-white/[0.12] bg-zinc-950 p-8 sm:p-12 relative overflow-hidden group hover:border-white/30 transition-colors duration-300">
             <div className="relative z-10 flex flex-col justify-between min-h-[300px]">
               <div className="space-y-4 max-w-3xl">
                 <div className="flex items-center gap-3 font-mono text-xs">
@@ -125,7 +125,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
 
                 <Link
                   href={`/blog/${featuredArticle.slug}`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-white text-black hover:bg-zinc-200 px-5 py-2.5 font-bold tracking-wider uppercase transition-all"
+                  className="pressable inline-flex items-center gap-2 rounded-md bg-white text-black hover:bg-zinc-200 px-5 py-2.5 font-semibold tracking-wide"
                 >
                   <span>LIRE LE DOSSIER COMPLET</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -198,7 +198,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
                 setSearchQuery('')
                 setSelectedCategory('TOUS')
               }}
-              className="mt-4 px-4 py-2 rounded-lg bg-white text-black font-mono text-xs font-semibold cursor-pointer"
+              className="pressable mt-4 px-4 py-2 rounded-md bg-white text-black font-mono text-xs font-semibold cursor-pointer"
             >
               RÉINITIALISER LES FILTRES
             </button>
@@ -214,7 +214,7 @@ export default function BlogHubClient({articles, categories}: BlogHubClientProps
                   animate={{opacity: 1, y: 0}}
                   exit={{opacity: 0, scale: 0.98}}
                   transition={{duration: 0.3, delay: idx * 0.03}}
-                  className="group rounded-2xl border border-white/[0.08] bg-zinc-950 p-6 flex flex-col justify-between hover:border-white/25 transition-all duration-300"
+                  className="group rounded-xl border border-white/[0.08] bg-zinc-950 p-6 flex flex-col justify-between hover:border-white/25 transition-colors duration-300"
                 >
                   <div className="space-y-4">
                     {/* Header tags */}

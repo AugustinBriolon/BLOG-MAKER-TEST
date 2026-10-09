@@ -18,7 +18,10 @@ export default function Footer() {
     <footer className="relative bg-black border-t border-white/[0.08] overflow-hidden text-zinc-400">
       {/* Infinite Marquee Strip */}
       <div className="border-b border-white/[0.08] bg-black py-3.5 overflow-hidden flex whitespace-nowrap">
-        <div className="flex animate-[marquee_30s_linear_infinite] gap-8 font-mono text-[11px] uppercase tracking-widest text-zinc-600">
+        <div
+          data-marquee
+          className="flex animate-[marquee_30s_linear_infinite] gap-8 font-mono text-[11px] uppercase tracking-widest text-zinc-600 motion-reduce:animate-none"
+        >
           {[...marqueeItems, ...marqueeItems].map((item, idx) => (
             <span key={idx} className="flex items-center gap-6">
               <span className="text-zinc-400">{item}</span>

@@ -26,6 +26,22 @@
     @apply font-semibold tracking-tight text-white;
   }
 
+  /* Display: tighten tracking as size grows (Apple UI typography) */
+  .type-display {
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* Instant press feedback on interactive chrome */
+  .pressable:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .pressable {
+    transition: transform 100ms ease-out, color 150ms ease, background-color 150ms ease,
+      border-color 150ms ease;
+  }
+
   /* Ultra-minimal scrollbar */
   ::-webkit-scrollbar {
     width: 4px;
@@ -160,4 +176,37 @@
 @theme {
   --color-amber-400: #fbbf24;
   --color-amber-500: #f59e0b;
+}
+
+/* Apple Design §14 — reduced motion / transparency / contrast */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-\[marquee_30s_linear_infinite\],
+  [data-marquee] {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .chrome-glass {
+    background-color: #000000 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .chrome-glass {
+    background-color: #000000 !important;
+    border-color: rgb(255 255 255 / 0.35) !important;
+    backdrop-filter: none !important;
+  }
 }

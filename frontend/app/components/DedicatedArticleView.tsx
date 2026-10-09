@@ -69,7 +69,7 @@ export default function DedicatedArticleView({
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+          <h1 className="type-display text-3xl sm:text-5xl font-semibold text-white tracking-tight leading-tight">
             {title}
           </h1>
 
