@@ -38,7 +38,10 @@
   }
 
   .pressable {
-    transition: transform 100ms ease-out, color 150ms ease, background-color 150ms ease,
+    transition:
+      transform 100ms ease-out,
+      color 150ms ease,
+      background-color 150ms ease,
       border-color 150ms ease;
   }
 

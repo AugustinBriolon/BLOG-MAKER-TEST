@@ -22,7 +22,8 @@ type ArticlesSectionProps = {
 }
 
 export default function ArticlesSection({sanityPosts = []}: ArticlesSectionProps) {
-  const [activeFilter, setActiveFilter] = useState<(typeof BLOG_MAGAZINE_CATEGORIES)[number]>('TOUS')
+  const [activeFilter, setActiveFilter] =
+    useState<(typeof BLOG_MAGAZINE_CATEGORIES)[number]>('TOUS')
 
   const displayItems = (sanityPosts || []).map((p) => ({
     _id: p._id,

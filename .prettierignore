@@ -13,6 +13,13 @@ dist/
 build/
 out/
 .next/
+**/.next/
+.sanity/
+**/.sanity/
+.turbo/
+**/.turbo/
+graft/
+**/graft/
 
 # Other generated files
 *.min.js
