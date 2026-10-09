@@ -2,8 +2,6 @@ import {revalidatePath} from 'next/cache'
 import {type NextRequest, NextResponse} from 'next/server'
 import {parseBody} from 'next-sanity/webhook'
 
-export const runtime = 'nodejs'
-
 interface WebhookPayload {
   _id?: string
   _type?: string
