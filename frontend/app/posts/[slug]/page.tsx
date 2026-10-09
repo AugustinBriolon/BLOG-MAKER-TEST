@@ -52,8 +52,8 @@ export async function generateMetadata(
         post?.author?.firstName && post?.author?.lastName
           ? [{name: `${post.author.firstName} ${post.author.lastName}`}]
           : [],
-      title: post?.title,
-      description: post?.excerpt || undefined,
+      title: post?.metaTitle || post?.title,
+      description: post?.metaDescription || post?.excerpt || undefined,
       alternates: {
         canonical: `/posts/${slug}`,
       },
