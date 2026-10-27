@@ -186,22 +186,29 @@ export default function ArticleBody(post: ArticleBodyProps) {
         <section className="rounded-2xl border border-white/[0.08] bg-zinc-950 p-8 flex flex-col sm:flex-row sm:items-center gap-6">
           <div className="space-y-2 flex-1">
             <div className="font-mono text-xs text-amber-400 uppercase tracking-widest font-bold">
-              [ EXPÉRIENCE XSR 900 // CP3 ]
+              [ EXPÉRIENCE XSR 900 // ESSAI CONCESSIONNAIRE ]
             </div>
             <h2 className="text-lg font-bold text-white">
-              Découvrez la machine en 3D temps réel & écoutez le CP3
+              Passez de la lecture au guidon : réservez votre essai CP3
             </h2>
             <p className="text-sm text-zinc-400 font-light leading-relaxed">
-              Pivotez autour du châssis Deltabox à 360°, zoomez sur les détails mécaniques et
-              écoutez la montée en régime du 3-cylindres calé à 120°.
+              Ressentez la sonorité inimitable à 120°, les 119 ch et le châssis Deltabox en conditions réelles chez un concessionnaire officiel.
             </p>
           </div>
-          <a
-            href="/#showroom-3d"
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-white px-5 font-mono text-xs font-bold uppercase tracking-wider text-black hover:bg-zinc-200 transition-colors shrink-0"
-          >
-            Studio 3D & Specs
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <a
+              href="/contact"
+              className="inline-flex min-h-11 items-center justify-center rounded-lg bg-white px-5 font-mono text-xs font-bold uppercase tracking-wider text-black hover:bg-zinc-200 transition-colors"
+            >
+              Réserver un essai
+            </a>
+            <a
+              href="/#showroom-3d"
+              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/20 bg-black px-4 font-mono text-xs font-bold uppercase tracking-wider text-white hover:bg-white/10 transition-colors"
+            >
+              Studio 3D
+            </a>
+          </div>
         </section>
       )}
     </div>

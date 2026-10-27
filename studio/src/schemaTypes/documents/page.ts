@@ -18,6 +18,21 @@ export const page = defineType({
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'metaTitle',
+      title: 'Meta Title (SEO)',
+      type: 'string',
+      description: 'Titre SEO pour la balise <title> (55-65 caractères).',
+      validation: (Rule) => Rule.max(70),
+    }),
+    defineField({
+      name: 'metaDescription',
+      title: 'Meta Description (SEO)',
+      type: 'text',
+      rows: 3,
+      description: 'Meta description pour les moteurs de recherche.',
+      validation: (Rule) => Rule.max(180),
+    }),
 
     defineField({
       name: 'slug',

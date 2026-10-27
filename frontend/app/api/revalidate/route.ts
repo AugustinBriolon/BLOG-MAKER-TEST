@@ -38,31 +38,32 @@ async function pingIndexNow(paths: string[]) {
 export async function POST(req: NextRequest) {
   try {
     const secret = process.env.SANITY_REVALIDATE_SECRET
+    if (!secret || !secret.trim()) {
+      return NextResponse.json(
+        {message: 'Revalidation secret is not configured on server'},
+        {status: 401},
+      )
+    }
 
+    const trimmedSecret = secret.trim()
     const hasSignatureHeader = Boolean(req.headers.get('sanity-webhook-signature'))
     const authHeader = req.headers.get('authorization')
     const secretQuery = req.nextUrl.searchParams.get('secret')
 
     let body: WebhookPayload | null = null
 
-    if (secret && hasSignatureHeader) {
-      const parsed = await parseBody<WebhookPayload>(req, secret, false)
+    if (hasSignatureHeader) {
+      const parsed = await parseBody<WebhookPayload>(req, trimmedSecret, false)
       if (parsed.isValidSignature === false) {
         return NextResponse.json({message: 'Invalid signature'}, {status: 401})
       }
       body = parsed.body
-    } else if (secret) {
+    } else {
       const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null
       const providedSecret = bearerToken || secretQuery
-      if (providedSecret !== secret.trim()) {
+      if (providedSecret !== trimmedSecret) {
         return NextResponse.json({message: 'Invalid secret'}, {status: 401})
       }
-      try {
-        body = (await req.json()) as WebhookPayload
-      } catch {
-        body = null
-      }
-    } else {
       try {
         body = (await req.json()) as WebhookPayload
       } catch {
@@ -77,10 +78,11 @@ export async function POST(req: NextRequest) {
           ? body.slug.current
           : null
 
-    const revalidatedPaths: string[] = ['/', '/blog', '/sitemap.xml']
+    const revalidatedPaths: string[] = ['/', '/blog', '/contact', '/sitemap.xml']
 
     revalidatePath('/')
     revalidatePath('/blog')
+    revalidatePath('/contact')
     revalidatePath('/sitemap.xml')
 
     if (slug) {
@@ -106,18 +108,24 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const secret = process.env.SANITY_REVALIDATE_SECRET
-  if (secret) {
-    const provided = req.nextUrl.searchParams.get('secret')
-    if (provided !== secret.trim()) {
-      return NextResponse.json({message: 'Invalid secret'}, {status: 401})
-    }
+  if (!secret || !secret.trim()) {
+    return NextResponse.json(
+      {message: 'Revalidation secret is not configured on server'},
+      {status: 401},
+    )
+  }
+
+  const provided = req.nextUrl.searchParams.get('secret')
+  if (provided !== secret.trim()) {
+    return NextResponse.json({message: 'Invalid secret'}, {status: 401})
   }
 
   const slug = req.nextUrl.searchParams.get('slug')
-  const paths = ['/', '/blog', '/sitemap.xml']
+  const paths = ['/', '/blog', '/contact', '/sitemap.xml']
 
   revalidatePath('/')
   revalidatePath('/blog')
+  revalidatePath('/contact')
   revalidatePath('/sitemap.xml')
 
   if (slug) {

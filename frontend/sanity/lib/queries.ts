@@ -52,6 +52,8 @@ export const getPageQuery = defineQuery(`
     _id,
     _type,
     name,
+    metaTitle,
+    metaDescription,
     slug,
     heading,
     subheading,

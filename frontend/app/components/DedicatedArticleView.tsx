@@ -193,13 +193,22 @@ export default function DedicatedArticleView({
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>RETOUR AU BLOG COMPLET</span>
           </Link>
-          <Link
-            href="/#showroom-3d"
-            className="inline-flex min-h-11 items-center gap-2 text-zinc-400 hover:text-white transition-colors"
-          >
-            <span>EXPLORER LA MACHINE EN 3D</span>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/contact"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white px-4 font-bold text-black hover:bg-zinc-200 transition-colors"
+            >
+              <span>RÉSERVER UN ESSAI</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              href="/#showroom-3d"
+              className="inline-flex min-h-11 items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+            >
+              <span>STUDIO 3D</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
         {relatedArticles.length > 0 && (

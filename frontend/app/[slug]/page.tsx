@@ -38,9 +38,19 @@ export async function generateMetadata(props: PageProps<'/[slug]'>): Promise<Met
     perspective,
   })
 
+  const title = page?.metaTitle || page?.name || 'Page | Yamaha XSR 900'
+  const description =
+    page?.metaDescription ||
+    page?.subheading ||
+    page?.heading ||
+    'Yamaha XSR 900 — Dossiers complets, essais et caractéristiques techniques du roadster CP3.'
+
   return {
-    title: page?.name,
-    description: page?.heading,
+    title,
+    description,
+    alternates: {
+      canonical: `/${slug}`,
+    },
   } satisfies Metadata
 }
 

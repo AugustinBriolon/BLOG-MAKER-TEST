@@ -42,19 +42,25 @@ export async function generateMetadata(
     const previousImages = (await parent).openGraph?.images || []
     const ogImage = resolveOpenGraphImage(post?.coverImage)
 
+    const pageTitle = post?.metaTitle || post?.title || 'Dossier Yamaha XSR 900'
+    const pageDescription =
+      post?.metaDescription?.trim() ||
+      post?.excerpt?.trim() ||
+      `Dossier technique "${pageTitle}" : caractéristiques, moteur CP3, réglages et retours d'expérience sur la Yamaha XSR 900.`
+
     return {
       authors:
         post?.author?.firstName && post?.author?.lastName
           ? [{name: `${post.author.firstName} ${post.author.lastName}`}]
           : [],
-      title: post?.metaTitle || post?.title,
-      description: post?.metaDescription || post?.excerpt || undefined,
+      title: pageTitle,
+      description: pageDescription,
       alternates: {
         canonical: `/blog/${slug}`,
       },
       openGraph: {
-        title: `${post?.title} | Dossier Yamaha XSR 900`,
-        description: post?.excerpt || undefined,
+        title: `${pageTitle} | Dossier Yamaha XSR 900`,
+        description: pageDescription,
         type: 'article',
         publishedTime: post?.date || undefined,
         images: ogImage ? [ogImage, ...previousImages] : previousImages,

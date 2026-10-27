@@ -33,15 +33,20 @@ export default function Header() {
             <Link href="/blog" className="hover:text-white transition-colors pressable">
               BLOG
             </Link>
+            <Link href="/contact" className="hover:text-white transition-colors pressable text-amber-400">
+              ESSAI
+            </Link>
           </nav>
 
-          <Link
-            href="/blog"
-            className="pressable inline-flex items-center gap-2 rounded-md bg-zinc-950 border border-white/[0.1] hover:border-white/30 px-3 py-1.5 font-mono text-[11px] font-medium text-zinc-300 hover:text-white"
-          >
-            <span>LE BLOG</span>
-            <ArrowRight className="h-3 w-3 text-zinc-500" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/contact"
+              className="pressable inline-flex items-center gap-2 rounded-md bg-white hover:bg-zinc-200 px-3 py-1.5 font-mono text-[11px] font-bold text-black"
+            >
+              <span>ESSAI CP3</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
       </div>
     </header>

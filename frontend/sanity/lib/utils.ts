@@ -21,7 +21,7 @@ export function resolveOpenGraphImage(
   height = 627,
 ) {
   if (!image) return
-  const url = urlForImage(image)?.width(1200).height(627).fit('crop').url()
+  const url = urlForImage(image)?.width(width).height(height).fit('crop').format('webp').url()
   if (!url) return
   return {url, alt: (image as {alt?: string})?.alt || '', width, height}
 }

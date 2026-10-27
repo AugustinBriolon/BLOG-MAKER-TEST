@@ -43,7 +43,10 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase = new URL('http://localhost:3000')
   }
 
-  const plainDescription = toPlainText(description)
+  const rawDescription = toPlainText(description)?.trim()
+  const defaultFallbackDescription =
+    'Le guide complet et l’actualité de la Yamaha XSR 900 : essais complets, moteur CP3, accessoires, prépas café racer et conseils d’entretien.'
+  const plainDescription = rawDescription || defaultFallbackDescription
 
   return {
     metadataBase,
@@ -54,6 +57,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description: plainDescription,
     alternates: {
       canonical: '/',
+    },
+    other: {
+      indexnow: '7492c90e0b3543d8a9e14a70e7e1f98a',
     },
     openGraph: {
       title,
@@ -97,6 +103,9 @@ export default async function RootLayout({children}: {children: React.ReactNode}
       suppressHydrationWarning
       className={`${inter.variable} ${ibmPlexMono.variable} bg-black text-zinc-100 antialiased selection:bg-white selection:text-black`}
     >
+      <head>
+        <meta name="indexnow" content="7492c90e0b3543d8a9e14a70e7e1f98a" />
+      </head>
       <body className="bg-black text-zinc-100 min-h-screen overflow-x-hidden">
         <CustomCursor />
         <Toaster theme="dark" />

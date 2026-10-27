@@ -33,6 +33,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
     changeFrequency: 'daily',
   })
+  sitemap.push({
+    url: `${baseUrl}/contact`,
+    lastModified: new Date(),
+    priority: 0.8,
+    changeFrequency: 'monthly',
+  })
 
   if (allPostsAndPages != null && allPostsAndPages.data.length != 0) {
     for (const p of allPostsAndPages.data) {

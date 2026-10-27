@@ -18,19 +18,13 @@ describe('ISR Revalidation Route', () => {
     delete process.env.SANITY_REVALIDATE_SECRET
   })
 
-  it('revalidates paths on GET without secret requirement when env not set', async () => {
+  it('rejects GET with 401 when secret is not configured on server', async () => {
     const req = new NextRequest('http://localhost:3000/api/revalidate?slug=test-article')
     const res = await GET(req)
     const json = await res.json()
 
-    expect(res.status).toBe(200)
-    expect(json.revalidated).toBe(true)
-    expect(json.slug).toBe('test-article')
-    expect(revalidatePath).toHaveBeenCalledWith('/')
-    expect(revalidatePath).toHaveBeenCalledWith('/blog')
-    expect(revalidatePath).toHaveBeenCalledWith('/sitemap.xml')
-    expect(revalidatePath).toHaveBeenCalledWith('/blog/test-article')
-    expect(revalidatePath).toHaveBeenCalledWith('/posts/test-article')
+    expect(res.status).toBe(401)
+    expect(json.message).toContain('Revalidation secret is not configured')
   })
 
   it('rejects GET when secret is set and missing', async () => {
@@ -45,15 +39,23 @@ describe('ISR Revalidation Route', () => {
 
   it('accepts GET when correct secret is provided', async () => {
     process.env.SANITY_REVALIDATE_SECRET = 'secret123'
-    const req = new NextRequest('http://localhost:3000/api/revalidate?secret=secret123')
+    const req = new NextRequest('http://localhost:3000/api/revalidate?secret=secret123&slug=test-article')
     const res = await GET(req)
 
     expect(res.status).toBe(200)
     const json = await res.json()
     expect(json.revalidated).toBe(true)
+    expect(json.slug).toBe('test-article')
+    expect(revalidatePath).toHaveBeenCalledWith('/')
+    expect(revalidatePath).toHaveBeenCalledWith('/blog')
+    expect(revalidatePath).toHaveBeenCalledWith('/contact')
+    expect(revalidatePath).toHaveBeenCalledWith('/sitemap.xml')
+    expect(revalidatePath).toHaveBeenCalledWith('/blog/test-article')
+    expect(revalidatePath).toHaveBeenCalledWith('/posts/test-article')
   })
 
-  it('revalidates paths on POST with JSON body containing slug', async () => {
+  it('rejects POST when secret is missing', async () => {
+    process.env.SANITY_REVALIDATE_SECRET = 'secret123'
     const req = new NextRequest('http://localhost:3000/api/revalidate', {
       method: 'POST',
       body: JSON.stringify({
@@ -62,6 +64,24 @@ describe('ISR Revalidation Route', () => {
       }),
       headers: {
         'content-type': 'application/json',
+      },
+    })
+
+    const res = await POST(req)
+    expect(res.status).toBe(401)
+  })
+
+  it('revalidates paths on POST with valid Bearer secret', async () => {
+    process.env.SANITY_REVALIDATE_SECRET = 'secret123'
+    const req = new NextRequest('http://localhost:3000/api/revalidate', {
+      method: 'POST',
+      body: JSON.stringify({
+        _type: 'blogPost',
+        slug: {current: 'mon-nouvel-article'},
+      }),
+      headers: {
+        'content-type': 'application/json',
+        authorization: 'Bearer secret123',
       },
     })
 

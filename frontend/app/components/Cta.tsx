@@ -22,7 +22,7 @@ export default function CTA({block}: CtaProps) {
 
   return (
     <section className={isDark ? 'relative dark dark:bg-black' : 'relative dark:bg-black'}>
-      <div className="absolute inset-0 bg-size-[5px] bg-[url(/images/tile-1-black.png)] dark:bg-[url(/images/tile-1-white.png)] opacity-25" />
+      <div className="absolute inset-0 bg-size-[5px] bg-[url(/images/tile-1-black.webp)] dark:bg-[url(/images/tile-1-white.webp)] opacity-25" />
       <div className="container relative">
         <div className="grid lg:grid-cols-2 gap-12 py-12">
           <div

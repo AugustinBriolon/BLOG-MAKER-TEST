@@ -21,6 +21,21 @@ export const post = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'metaTitle',
+      title: 'Meta Title (SEO)',
+      type: 'string',
+      description: 'Titre SEO pour la balise <title> dans les résultats de recherche (55-65 caractères).',
+      validation: (rule) => rule.max(70),
+    }),
+    defineField({
+      name: 'metaDescription',
+      title: 'Meta Description (SEO)',
+      type: 'text',
+      rows: 3,
+      description: 'Description pour le snippet des moteurs de recherche (140-160 caractères).',
+      validation: (rule) => rule.max(180),
+    }),
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
