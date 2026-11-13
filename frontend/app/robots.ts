@@ -1,12 +1,27 @@
 import type {MetadataRoute} from 'next'
-import {headers} from 'next/headers'
 
-export default async function robots(): Promise<MetadataRoute.Robots> {
-  const headersList = await headers()
-  const host = headersList.get('host') || 'localhost:3000'
-  const proto =
-    headersList.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https')
-  const baseUrl = `${proto}://${host}`
+function resolveBaseUrl(): string {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : undefined) ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined)
+
+  if (fromEnv) {
+    try {
+      const u = new URL(fromEnv)
+      return `${u.protocol}//${u.host}`
+    } catch {
+      // fall through
+    }
+  }
+
+  return 'https://yamaha-xsr900.vercel.app'
+}
+
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = resolveBaseUrl()
 
   return {
     rules: [

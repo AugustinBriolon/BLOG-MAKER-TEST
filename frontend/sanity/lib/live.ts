@@ -6,8 +6,9 @@ import {token} from '@/sanity/lib/token'
 
 export const {SanityLive, sanityFetch} = defineLive({
   client,
-  serverToken: token,
-  browserToken: token,
+  // false = published CDN only; a revoked token would 401 every Live fetch (sitemap included).
+  serverToken: token || false,
+  browserToken: token || false,
   strict: true,
 })
 

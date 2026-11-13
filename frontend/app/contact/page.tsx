@@ -1,6 +1,7 @@
 import type {Metadata} from 'next'
 import Link from 'next/link'
 import {Calendar, Mail, MapPin, Phone, ShieldCheck, ArrowRight, Gauge} from 'lucide-react'
+import {buildContactJsonLd} from '@/app/structuredData'
 
 export const metadata: Metadata = {
   title: 'Réserver un Essai Yamaha XSR 900 // Contact & Concessionnaires',
@@ -19,8 +20,14 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
+  const jsonLd = buildContactJsonLd()
+
   return (
     <div className="min-h-screen bg-black text-zinc-100 py-12 md:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}}
+      />
       <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
         {/* Header */}
         <div className="border-b border-white/[0.08] pb-10 mb-12">

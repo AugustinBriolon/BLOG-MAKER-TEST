@@ -1,5 +1,10 @@
 import {describe, expect, it} from 'vitest'
-import {buildArticleJsonLd, buildBlogHubJsonLd, buildHomeJsonLd} from '@/app/structuredData'
+import {
+  buildArticleJsonLd,
+  buildBlogHubJsonLd,
+  buildContactJsonLd,
+  buildHomeJsonLd,
+} from '@/app/structuredData'
 
 const PRODUCT_TYPES = ['Product', 'Vehicle', 'Motorcycle', 'Car']
 const PRODUCT_REQUIRED_ONE_OF = ['offers', 'review', 'aggregateRating']
@@ -52,6 +57,24 @@ describe('buildBlogHubJsonLd', () => {
     expect(items).toHaveLength(2)
     expect(items[0].name).toBe('Accueil')
     expect(items[1].name).toBe('Blog')
+  })
+})
+
+describe('buildContactJsonLd', () => {
+  const jsonLd = buildContactJsonLd('https://yamaha-xsr900.vercel.app')
+  const nodes: Array<Record<string, unknown>> = jsonLd['@graph']
+
+  it('emits ContactPage and BreadcrumbList without inventing LocalBusiness address', () => {
+    const page = nodes.find((n) => n['@type'] === 'ContactPage')
+    const breadcrumb = nodes.find((n) => n['@type'] === 'BreadcrumbList')
+    const localBusiness = nodes.find((n) => n['@type'] === 'LocalBusiness')
+
+    expect(page).toBeDefined()
+    expect(breadcrumb).toBeDefined()
+    expect(localBusiness).toBeUndefined()
+
+    const about = page?.about as {email?: string}
+    expect(about?.email).toBe('contact@yamaha-xsr900.fr')
   })
 })
 

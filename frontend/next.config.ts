@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
         destination: '/blog/:slug',
         permanent: true,
       },
+      // Slug typé (tape) — doublon title vs version « etape-par-etape »
+      {
+        source: '/blog/comment-effectuer-l-entretien-du-moteur-cp3-tape-par-tape',
+        destination: '/blog/comment-effectuer-l-entretien-du-moteur-cp3-etape-par-etape',
+        permanent: true,
+      },
     ]
   },
 }

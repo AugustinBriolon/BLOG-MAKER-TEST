@@ -113,6 +113,54 @@ export function buildBlogHubJsonLd(baseUrlInput?: string) {
   }
 }
 
+export function buildContactJsonLd(baseUrlInput?: string) {
+  const origin = resolveSiteOrigin(baseUrlInput)
+  const contactUrl = `${origin}/contact`
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'ContactPage',
+        '@id': `${contactUrl}#webpage`,
+        'name': 'Réserver un Essai Yamaha XSR 900 // Contact & Concessionnaires',
+        'url': contactUrl,
+        'inLanguage': 'fr-FR',
+        'isPartOf': {
+          '@type': 'WebSite',
+          '@id': `${origin}/#website`,
+          'name': 'Yamaha XSR 900 Hub',
+          'url': origin,
+        },
+        'about': {
+          '@type': 'Organization',
+          'name': 'Yamaha XSR 900 Hub',
+          'url': origin,
+          'email': 'contact@yamaha-xsr900.fr',
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${contactUrl}#breadcrumb`,
+        'itemListElement': [
+          {
+            '@type': 'ListItem',
+            'position': 1,
+            'name': 'Accueil',
+            'item': `${origin}/`,
+          },
+          {
+            '@type': 'ListItem',
+            'position': 2,
+            'name': 'Contact',
+            'item': contactUrl,
+          },
+        ],
+      },
+    ],
+  }
+}
+
 export function buildArticleJsonLd(input: ArticleJsonLdInput) {
   const origin = resolveSiteOrigin(input.baseUrl)
   const articleUrl = `${origin}/blog/${input.slug}`
