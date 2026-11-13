@@ -40,11 +40,30 @@ function resolveSiteOrigin(inputUrl?: string): string {
   return 'https://yamaha-xsr900.vercel.app'
 }
 
+/** NAP limité aux faits visibles sur /contact — pas d’adresse ni téléphone inventés. */
+function buildLocalBusinessNode(origin: string) {
+  return {
+    '@type': 'LocalBusiness',
+    '@id': `${origin}/#localbusiness`,
+    'name': 'Yamaha XSR 900 Hub',
+    'url': origin,
+    'email': 'contact@yamaha-xsr900.fr',
+    'description':
+      'Hub éditorial et prise de contact pour essais Yamaha XSR 900 via le réseau de concessionnaires France & Benelux.',
+    'areaServed': [
+      {'@type': 'Country', 'name': 'France'},
+      {'@type': 'AdministrativeArea', 'name': 'Benelux'},
+    ],
+    'knowsAbout': ['Yamaha XSR 900', 'Moteur CP3'],
+  }
+}
+
 export function buildHomeJsonLd() {
   const origin = resolveSiteOrigin()
   return {
     '@context': 'https://schema.org',
     '@graph': [
+      buildLocalBusinessNode(origin),
       {
         '@type': 'WebSite',
         '@id': `${origin}/#website`,
@@ -52,6 +71,7 @@ export function buildHomeJsonLd() {
         'url': origin,
         'description': 'Guide technique, essais et archives du roadster Yamaha XSR 900 CP3.',
         'inLanguage': 'fr-FR',
+        'publisher': {'@id': `${origin}/#localbusiness`},
       },
       {
         '@type': 'WebPage',
@@ -65,6 +85,7 @@ export function buildHomeJsonLd() {
           'description':
             'Roadster néo-rétro propulsé par le 3-cylindres Crossplane CP3 de 890 cm³ et cadre Deltabox.',
         },
+        'isPartOf': {'@id': `${origin}/#website`},
       },
     ],
   }
@@ -85,12 +106,9 @@ export function buildBlogHubJsonLd(baseUrlInput?: string) {
           'Dossiers complets, guides d’entretien moteur CP3 et essais de la Yamaha XSR 900.',
         'url': blogUrl,
         'inLanguage': 'fr-FR',
-        'publisher': {
-          '@type': 'Organization',
-          'name': 'Yamaha XSR 900 Hub',
-          'url': origin,
-        },
+        'publisher': {'@id': `${origin}/#localbusiness`},
       },
+      buildLocalBusinessNode(origin),
       {
         '@type': 'BreadcrumbList',
         '@id': `${blogUrl}#breadcrumb`,
@@ -120,6 +138,7 @@ export function buildContactJsonLd(baseUrlInput?: string) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
+      buildLocalBusinessNode(origin),
       {
         '@type': 'ContactPage',
         '@id': `${contactUrl}#webpage`,
@@ -132,12 +151,8 @@ export function buildContactJsonLd(baseUrlInput?: string) {
           'name': 'Yamaha XSR 900 Hub',
           'url': origin,
         },
-        'about': {
-          '@type': 'Organization',
-          'name': 'Yamaha XSR 900 Hub',
-          'url': origin,
-          'email': 'contact@yamaha-xsr900.fr',
-        },
+        'about': {'@id': `${origin}/#localbusiness`},
+        'mainEntity': {'@id': `${origin}/#localbusiness`},
       },
       {
         '@type': 'BreadcrumbList',
@@ -168,6 +183,7 @@ export function buildArticleJsonLd(input: ArticleJsonLdInput) {
   const authorRole = input.authorRole?.trim() || 'Rédacteur technique & Pilote'
 
   const graph: Array<Record<string, unknown>> = [
+    buildLocalBusinessNode(origin),
     {
       '@type': 'BlogPosting',
       '@id': `${articleUrl}#article`,
@@ -194,11 +210,7 @@ export function buildArticleJsonLd(input: ArticleJsonLdInput) {
         'jobTitle': authorRole,
         ...(input.authorBio ? {description: input.authorBio} : {}),
       },
-      'publisher': {
-        '@type': 'Organization',
-        'name': 'Yamaha XSR 900 Hub',
-        'url': origin,
-      },
+      'publisher': {'@id': `${origin}/#localbusiness`},
     },
     {
       '@type': 'BreadcrumbList',

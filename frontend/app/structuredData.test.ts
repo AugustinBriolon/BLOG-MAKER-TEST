@@ -35,19 +35,31 @@ describe('buildHomeJsonLd', () => {
     const website = nodes.find((node) => node['@type'] === 'WebSite')
     expect(website).toMatchObject({name: 'Yamaha XSR 900 Hub', inLanguage: 'fr-FR'})
   })
+
+  it('emits LocalBusiness with email and areaServed only (no invented NAP)', () => {
+    const localBusiness = nodes.find((node) => node['@type'] === 'LocalBusiness')
+    expect(localBusiness).toMatchObject({
+      name: 'Yamaha XSR 900 Hub',
+      email: 'contact@yamaha-xsr900.fr',
+    })
+    expect(localBusiness).not.toHaveProperty('address')
+    expect(localBusiness).not.toHaveProperty('telephone')
+  })
 })
 
 describe('buildBlogHubJsonLd', () => {
   const jsonLd = buildBlogHubJsonLd('https://yamaha-xsr900.vercel.app')
   const nodes: Array<Record<string, unknown>> = jsonLd['@graph']
 
-  it('emits Blog and BreadcrumbList schemas', () => {
+  it('emits Blog, LocalBusiness and BreadcrumbList schemas', () => {
     const blog = nodes.find((n) => n['@type'] === 'Blog')
     const breadcrumb = nodes.find((n) => n['@type'] === 'BreadcrumbList')
+    const localBusiness = nodes.find((n) => n['@type'] === 'LocalBusiness')
 
     expect(blog).toBeDefined()
     expect(blog?.name).toContain('Le Blog XSR 900')
     expect(breadcrumb).toBeDefined()
+    expect(localBusiness).toBeDefined()
 
     const items = breadcrumb?.itemListElement as Array<{
       position: number
@@ -64,17 +76,23 @@ describe('buildContactJsonLd', () => {
   const jsonLd = buildContactJsonLd('https://yamaha-xsr900.vercel.app')
   const nodes: Array<Record<string, unknown>> = jsonLd['@graph']
 
-  it('emits ContactPage and BreadcrumbList without inventing LocalBusiness address', () => {
+  it('emits ContactPage, BreadcrumbList and LocalBusiness without inventing address/phone', () => {
     const page = nodes.find((n) => n['@type'] === 'ContactPage')
     const breadcrumb = nodes.find((n) => n['@type'] === 'BreadcrumbList')
-    const localBusiness = nodes.find((n) => n['@type'] === 'LocalBusiness')
+    const localBusiness = nodes.find((n) => n['@type'] === 'LocalBusiness') as Record<
+      string,
+      unknown
+    >
 
     expect(page).toBeDefined()
     expect(breadcrumb).toBeDefined()
-    expect(localBusiness).toBeUndefined()
-
-    const about = page?.about as {email?: string}
-    expect(about?.email).toBe('contact@yamaha-xsr900.fr')
+    expect(localBusiness).toMatchObject({
+      email: 'contact@yamaha-xsr900.fr',
+      name: 'Yamaha XSR 900 Hub',
+    })
+    expect(localBusiness).not.toHaveProperty('address')
+    expect(localBusiness).not.toHaveProperty('telephone')
+    expect(page?.about).toEqual({'@id': 'https://yamaha-xsr900.vercel.app/#localbusiness'})
   })
 })
 
@@ -107,10 +125,8 @@ describe('buildArticleJsonLd', () => {
       'name': 'Augustin Briolon',
       'jobTitle': 'Chroniqueur technique & Pilote',
     })
-    expect(post?.publisher).toMatchObject({
-      '@type': 'Organization',
-      'name': 'Yamaha XSR 900 Hub',
-    })
+    expect(post?.publisher).toEqual({'@id': 'https://yamaha-xsr900.vercel.app/#localbusiness'})
+    expect(nodes.find((n) => n['@type'] === 'LocalBusiness')).toBeDefined()
   })
 
   it('emits a BreadcrumbList matching the 3-level site hierarchy', () => {
